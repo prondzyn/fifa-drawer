@@ -1,5 +1,19 @@
 apply plugin: 'java'
 
+sourceCompatibility = '1.7'
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
 repositories {
   mavenCentral()
 }
@@ -9,6 +23,8 @@ dependencies {
 }
 
 task standaloneJar(type: Jar) {
+    tasks.clean.execute()
+    tasks.compileJava.execute()
     from files(sourceSets.main.output.classesDir)
     from configurations.runtime.asFileTree.files.collect { zipTree(it) }
 

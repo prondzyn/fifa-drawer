@@ -1,3 +1,5 @@
 build
 config
 .gradle
+/.nb-gradle/profiles/private/
+.nb-gradle-properties
