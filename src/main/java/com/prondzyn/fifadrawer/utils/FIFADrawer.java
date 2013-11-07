@@ -1,46 +1,51 @@
 package com.prondzyn.fifadrawer.utils;
 
+import com.prondzyn.fifadrawer.entities.Team;
+import com.prondzyn.fifadrawer.entities.TeamType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FIFADrawer {
 
-  private Pair incompleteTeam;
+  private Pair incompletePair;
 
-  public String draw(List<String> participants) {
+  public String draw(List<String> participants, Map<TeamType, List> teams) {
     List<String> participantsCopy = CopyUtils.copy(participants);
-    List<Pair> teams = drawTeams(participantsCopy);
-    List<String> matches = drawMatches(teams);
-    String message = "";
+    List<Pair> pairs = drawPairs(participantsCopy);
+    List<String> matches = drawMatches(pairs);
+    StringBuilder builder = new StringBuilder();
     for (int i = 0; i < matches.size(); i++) {
-      message += getMatchTime(i) + ": " + matches.get(i) + "\n";
+      builder.append(getMatchTime(i)).append(": ").append(matches.get(i)).append("\n");
     }
-    return message;
+    String drawnTeams = drawTeams(teams);
+    builder.append("\n").append(drawnTeams);
+    return builder.toString();
   }
 
-  private List<Pair> drawTeams(List<String> participants) {
-    List<Pair> teams = new ArrayList<Pair>();
+  private List<Pair> drawPairs(List<String> participants) {
+    List<Pair> pairs = new ArrayList<>();
     while (participants.size() > 0) {
       String first = RandomUtils.removeRandomItem(participants);
       String second = RandomUtils.removeRandomItem(participants);
-      Pair team = new Pair(first, second);
-      teams.add(team);
+      Pair pair = new Pair(first, second);
+      pairs.add(pair);
       if (first == null || second == null) {
-        incompleteTeam = team;
+        incompletePair = pair;
       }
     }
-    return teams;
+    return pairs;
   }
 
   private List<String> drawMatches(List<Pair> teams) {
-    boolean firstMatch = (incompleteTeam != null);
-    List<String> matches = new ArrayList<String>();
+    boolean firstMatch = (incompletePair != null);
+    List<String> matches = new ArrayList<>();
     while (teams.size() > 0) {
-      Pair first = null;
-      Pair second = null;
+      Pair first;
+      Pair second;
       if (firstMatch) {
         first = RandomUtils.getRandomItem(teams);
-        if (first != incompleteTeam) {
+        if (first != incompletePair) {
           continue;
         }
         teams.remove(first);
@@ -74,10 +79,29 @@ public class FIFADrawer {
     return hour + ":" + minute;
   }
 
+  private String drawTeams(Map<TeamType, List> teams) {
+    List<TeamType> availableTeamTypes = new ArrayList<>(teams.keySet());
+    TeamType type = RandomUtils.getRandomItem(availableTeamTypes);
+    List teamsList = teams.get(type);
+    if (CollectionUtils.isNotEmpty(teamsList)) {
+      Team home = (Team) RandomUtils.removeRandomItem(teamsList);
+      Team visitor;
+      do {
+        visitor = (Team) RandomUtils.removeRandomItem(teamsList);
+        if (visitor == null) {
+          visitor = home;
+        }
+      } while (home.notAsPowerfulAs(visitor));
+      return new StringBuilder().append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor).toString();
+    } else {
+      return "";
+    }
+  }
+
   private class Pair {
 
-    private String first;
-    private String second;
+    private final String first;
+    private final String second;
 
     public Pair(String first, String second) {
       this.first = first;

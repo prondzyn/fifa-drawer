@@ -1,11 +1,12 @@
 package com.prondzyn.fifadrawer.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import com.prondzyn.fifadrawer.Constants;
+import com.prondzyn.fifadrawer.entities.Properties;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
 import java.util.Set;
-
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.AddressException;
@@ -14,56 +15,38 @@ import javax.mail.internet.MimeMessage;
 
 public class MailSender {
 
-  private static final String ADMIN_EMAIL = "TODO";
+  private final Properties applicationProperties;
 
-  private static List<String> SENDERS;
-  static {
-    SENDERS = new ArrayList<String>();
-    SENDERS.add("Lionel Messi");
-    SENDERS.add("Cristiano Ronaldo");
-    SENDERS.add("Kaka");
-    SENDERS.add("Fabio Cannavaro");
-    SENDERS.add("Ronaldinho");
-    SENDERS.add("Zinedine Zidane");
-    SENDERS.add("Ronaldo");
-    SENDERS.add("Luis Figo");
-    SENDERS.add("Andrij Szewczenko");
-    SENDERS.add("Pavel Nedved");
-    SENDERS.add("Michael Owen");
+  public MailSender(Properties applicationProperties) {
+    this.applicationProperties = applicationProperties;
   }
 
-  public static void send(String message, Set<String> recipientsEmails) {
+  public void send(String message, Set<String> recipientsEmails) throws MessagingException, UnsupportedEncodingException {
 
-    String host = "TODO";
-
-    Properties properties = System.getProperties();
-    properties.setProperty("mail.smtp.host", host);
+    java.util.Properties properties = System.getProperties();
+    properties.setProperty("mail.smtp.host", applicationProperties.getMailHost());
+    properties.setProperty("charset", Constants.DEFAULT_CHARSET);
     Session session = Session.getDefaultInstance(properties);
 
-    try {
+    InternetAddress[] to = prepareRecipients(recipientsEmails);
 
-      InternetAddress from = new InternetAddress("TODO", RandomUtils.getRandomItem(SENDERS));
+    MimeMessage mimeMsg = new MimeMessage(session);
+    mimeMsg.setFrom(applicationProperties.getSender());
+    mimeMsg.addRecipients(Message.RecipientType.TO, to);
+    mimeMsg.setReplyTo(to);
+    mimeMsg.setSubject(applicationProperties.getEmailSubject(), Constants.DEFAULT_CHARSET);
+    mimeMsg.setText(message, Constants.DEFAULT_CHARSET);
+    mimeMsg.setSentDate(new Date());
 
-      InternetAddress[] to = prepareRecipients(recipientsEmails);
-
-      MimeMessage mimeMsg = new MimeMessage(session);
-      mimeMsg.setFrom(from);
-      mimeMsg.addRecipients(Message.RecipientType.TO, to);
-      if (!recipientsEmails.contains(ADMIN_EMAIL)) {
-        mimeMsg.setRecipient(Message.RecipientType.CC, new InternetAddress(ADMIN_EMAIL));
-      }
-      mimeMsg.setReplyTo(to);
-      mimeMsg.setSubject("TODO");
-      mimeMsg.setText(message);
-
-      Transport.send(mimeMsg);
-
-    } catch (Exception ex) {
-      ex.printStackTrace();
+    String adminEmail = applicationProperties.getAdminEmailAddress();
+    if (!recipientsEmails.contains(adminEmail)) {
+      mimeMsg.setRecipient(Message.RecipientType.CC, new InternetAddress(adminEmail));
     }
+
+    Transport.send(mimeMsg);
   }
 
-  private static InternetAddress[] prepareRecipients(Set<String> recipientsEmails) throws AddressException {
+  private InternetAddress[] prepareRecipients(Set<String> recipientsEmails) throws AddressException {
     InternetAddress[] addresses = new InternetAddress[recipientsEmails.size()];
     int i = 0;
     for (String email : recipientsEmails) {

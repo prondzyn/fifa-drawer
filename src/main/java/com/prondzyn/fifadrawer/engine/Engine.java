@@ -1,16 +1,21 @@
 package com.prondzyn.fifadrawer.engine;
 
 import com.prondzyn.fifadrawer.entities.Participants;
-import com.prondzyn.fifadrawer.lang.LoadingParticipantsException;
+import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.entities.Teams;
+import com.prondzyn.fifadrawer.lang.LoadingException;
+import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
+import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.utils.FIFADrawer;
 import com.prondzyn.fifadrawer.utils.MailSender;
 import com.prondzyn.fifadrawer.utils.ParticipantsLoader;
+import com.prondzyn.fifadrawer.utils.PropertiesLoader;
+import com.prondzyn.fifadrawer.utils.TeamsLoader;
+import java.io.IOException;
 
 public class Engine {
 
-  private static final int DRAW_COUNT = 1;
-
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
 
     if (args.length != 1) {
       System.out.println("You have to specify path to file with participants.");
@@ -18,24 +23,28 @@ public class Engine {
       return;
     }
 
-    String filepath = args[0];
-
-    Participants participants = new Participants();
+    String configFilePath = args[0];
 
     try {
-      participants = ParticipantsLoader.load(filepath);
-    } catch (Exception ex) {
-      throw new LoadingParticipantsException(ex);
-    }
+      Properties properties = PropertiesLoader.load(configFilePath);
+      properties.validate();
+      
+      String participantsFilePath = properties.getParticipantsFilePath();
+      Participants participants = ParticipantsLoader.load(participantsFilePath);
+      if (participants.isEmpty()) {
+        return;
+      }
+      
+      String teamsFilePath = properties.getTeamsFilePath();
+      Teams teams = TeamsLoader.load(teamsFilePath);
 
-    if (participants.isEmpty()) {
-      return;
-    }
-
-    FIFADrawer fifaDrawer = new FIFADrawer();
-    for (int i = 0; i < DRAW_COUNT; i++) {
-      String message = fifaDrawer.draw(participants.getActiveParticipantsUsernames());
-      MailSender.send(message, participants.getActiveParticipantsEmails());
+      FIFADrawer fifaDrawer = new FIFADrawer();
+      String message = fifaDrawer.draw(participants.getActiveParticipantsUsernames(), teams.get());
+      
+      new MailSender(properties).send(message, participants.getActiveParticipantsEmails());
+      
+    } catch (IOException | ParticipantsFileException | TeamsFileException ex) {
+      throw new LoadingException(ex);
     }
   }
 

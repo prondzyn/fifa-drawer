@@ -8,14 +8,14 @@ import java.util.Set;
 
 public class Participants {
 
-  private List<Participant> participants = new ArrayList<Participant>();
+  private final List<Participant> participants = new ArrayList<>();
 
   public void add(Participant participant) {
     participants.add(participant);
   }
 
   public Set<String> getActiveParticipantsEmails() {
-    Set<String> emails = new LinkedHashSet<String>();
+    Set<String> emails = new LinkedHashSet<>();
     for (Participant p : participants) {
       if (p.isActive()) {
         emails.add(p.getEmail());
@@ -25,7 +25,7 @@ public class Participants {
   }
 
   public List<String> getActiveParticipantsUsernames() {
-    List<String> usernames = new LinkedList<String>();
+    List<String> usernames = new LinkedList<>();
     for (Participant p : participants) {
       if (p.isActive()) {
         usernames.add(p.getUsername());

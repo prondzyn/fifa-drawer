@@ -1,5 +1,6 @@
 package com.prondzyn.fifadrawer.utils;
 
+import com.prondzyn.fifadrawer.Constants;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,14 +12,14 @@ import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 
 public class ParticipantsLoader {
 
-  public static Participants load(String filepath) throws IOException {
+  public static Participants load(String filepath) throws IOException, ParticipantsFileException {
     Participants loaded = new Participants();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;
     try {
       fis = new FileInputStream(filepath);
-      ioReader = new InputStreamReader(fis);
+      ioReader = new InputStreamReader(fis, Constants.DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
       String line;
       while ((line = reader.readLine()) != null) {
