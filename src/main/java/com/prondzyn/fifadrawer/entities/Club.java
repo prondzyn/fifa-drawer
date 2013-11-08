@@ -32,7 +32,7 @@ public class Club extends Team {
         builder.append(country);
         countryExists = true;
       }
-      if (StringUtils.isNotBlank(league)) {
+      if (StringUtils.isNotBlank(league) && StringUtils.notEqualIgnoreCase(country, league)) {
         if (countryExists) {
           builder.append(", ");
         }
