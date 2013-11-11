@@ -1,13 +1,14 @@
 package com.prondzyn.fifadrawer.entities;
 
 import com.prondzyn.fifadrawer.utils.StringUtils;
+import java.math.BigDecimal;
 
 public class Club extends Team {
 
   private final String country;
   private final String league;
 
-  public Club(String name, Double rank, String country, String league) {
+  public Club(String name, BigDecimal rank, String country, String league) {
     this.name = name;
     this.rank = rank;
     this.country = country;

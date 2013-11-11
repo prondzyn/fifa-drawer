@@ -4,9 +4,11 @@ import com.prondzyn.fifadrawer.Constants;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
 import com.prondzyn.fifadrawer.utils.RandomUtils;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.mail.internet.InternetAddress;
 
 public class Properties extends java.util.Properties {
@@ -21,10 +23,13 @@ public class Properties extends java.util.Properties {
   private static final String PARTICIPANTS_FILE_PATH = "file.path.participants";
   private static final String TEAMS_FILE_PATH = "file.path.teams";
 
-  private static final List<String> required;
+  private static final String TEAMS_RANK_THRESHOLD = "teams.rank.threshold";
+  private static final String TEAMS_RANK_COMPARISION = "teams.rank.comparison";
+
+  private static final Set<String> required;
 
   static {
-    required = new ArrayList<>();
+    required = new HashSet<>();
     required.add(MAIL_HOST);
     required.add(MAIL_SUBJECT);
     required.add(MAIL_SENDER_EMAIL);
@@ -32,6 +37,8 @@ public class Properties extends java.util.Properties {
     required.add(ADMIN_EMAIL);
     required.add(PARTICIPANTS_FILE_PATH);
     required.add(TEAMS_FILE_PATH);
+    required.add(TEAMS_RANK_THRESHOLD);
+    required.add(TEAMS_RANK_COMPARISION);
   }
 
   public void validate() {
@@ -78,5 +85,20 @@ public class Properties extends java.util.Properties {
 
   public String getEmailSubject() {
     return getProperty(MAIL_SUBJECT);
+  }
+
+  public BigDecimal getTeamsRankThreshold() {
+    BigDecimal threshold = getBigDecimalProperty(TEAMS_RANK_THRESHOLD);
+    threshold.setScale(1);
+    return threshold;
+  }
+
+  private BigDecimal getBigDecimalProperty(String key) {
+    String value = getProperty(key);
+    return new BigDecimal(value);
+  }
+  
+  public String getTeamsRankComparision() {
+    return getProperty(TEAMS_RANK_COMPARISION);
   }
 }

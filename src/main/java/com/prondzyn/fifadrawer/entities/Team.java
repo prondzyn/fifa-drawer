@@ -1,17 +1,18 @@
 package com.prondzyn.fifadrawer.entities;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 public abstract class Team implements Serializable {
 
   protected String name;
-  protected Double rank;
+  protected BigDecimal rank;
 
   public String getName() {
     return name;
   }
 
-  public Double getRank() {
+  public BigDecimal getRank() {
     return rank;
   }
 

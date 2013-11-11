@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 
 public class TeamsLoader {
   
@@ -32,7 +33,8 @@ public class TeamsLoader {
         String name = splitted[0];
         String league = splitted[1];
         String country = splitted[2];
-        Double rank = Double.valueOf(splitted[3]);
+        BigDecimal rank = new BigDecimal(splitted[3]);
+        rank.setScale(1);
         if (NATIONAL_TEAM_INDICATOR.equalsIgnoreCase(country) || NATIONAL_TEAM_INDICATOR.equalsIgnoreCase(league)) {
           loaded.add(new NationalTeam(name, rank));
         } else {

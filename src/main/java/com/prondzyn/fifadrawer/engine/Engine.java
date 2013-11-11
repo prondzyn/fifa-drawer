@@ -38,7 +38,7 @@ public class Engine {
       String teamsFilePath = properties.getTeamsFilePath();
       Teams teams = TeamsLoader.load(teamsFilePath);
 
-      FIFADrawer fifaDrawer = new FIFADrawer();
+      FIFADrawer fifaDrawer = new FIFADrawer(properties);
       String message = fifaDrawer.draw(participants.getActiveParticipantsUsernames(), teams.get());
       
       new MailSender(properties).send(message, participants.getActiveParticipantsEmails());

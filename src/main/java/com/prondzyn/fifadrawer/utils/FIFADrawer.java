@@ -1,7 +1,9 @@
 package com.prondzyn.fifadrawer.utils;
 
+import com.prondzyn.fifadrawer.entities.Properties;
 import com.prondzyn.fifadrawer.entities.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
+import com.prondzyn.fifadrawer.validators.TeamValidator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +11,12 @@ import java.util.Map;
 public class FIFADrawer {
 
   private Pair incompletePair;
+
+  private final Properties properties;
+
+  public FIFADrawer(Properties properties) {
+    this.properties = properties;
+  }
 
   public String draw(List<String> participants, Map<TeamType, List> teams) {
     List<String> participantsCopy = CopyUtils.copy(participants);
@@ -80,19 +88,29 @@ public class FIFADrawer {
   }
 
   private String drawTeams(Map<TeamType, List> teams) {
+    TeamValidator validator = new TeamValidator(properties);
     List<TeamType> availableTeamTypes = new ArrayList<>(teams.keySet());
     TeamType type = RandomUtils.getRandomItem(availableTeamTypes);
     List teamsList = teams.get(type);
     if (CollectionUtils.isNotEmpty(teamsList)) {
-      Team home = (Team) RandomUtils.removeRandomItem(teamsList);
+      Team home;
+      do {
+        home = (Team) RandomUtils.removeRandomItem(teamsList);
+      } while (validator.isNotValid(home));
+      if (home == null) {
+        return "";
+      }
       Team visitor;
       do {
         visitor = (Team) RandomUtils.removeRandomItem(teamsList);
         if (visitor == null) {
           visitor = home;
         }
-      } while (home.notAsPowerfulAs(visitor));
-      return new StringBuilder().append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor).toString();
+      } while (home.notAsPowerfulAs(visitor) && validator.isNotValid(visitor));
+      StringBuilder builder = new StringBuilder();
+      builder.append("Rank: ").append(home.getRank()).append("\n\n");
+      builder.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
+      return builder.toString();
     } else {
       return "";
     }
