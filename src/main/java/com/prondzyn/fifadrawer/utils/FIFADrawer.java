@@ -1,37 +1,36 @@
 package com.prondzyn.fifadrawer.utils;
 
-import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class FIFADrawer {
 
-  private final Properties properties;
+  private final List<String> participants;
+  private final Map<TeamType, Map<Rank, List<Team>>> teams;
   private final StringBuilder drawResult;
 
   private Pair incompletePair;
 
-  public FIFADrawer(Properties properties) {
-    this.properties = properties;
+  public FIFADrawer(List<String> participants, Map<TeamType, Map<Rank, List<Team>>> teams) {
+    this.participants = CopyUtils.copy(participants);
+    this.teams = teams;
     this.drawResult = new StringBuilder();
   }
 
-  public String draw(List<String> participants, Map<TeamType, Map<BigDecimal, List<Team>>> teams) {
+  public String draw() {
 
-    List<String> participantsCopy = CopyUtils.copy(participants);
-    List<Pair> pairs = drawPairs(participantsCopy);
-    drawMatches(pairs);
+    drawMatches(drawPairs());
 
-    drawTeams(teams);
+    drawTeams();
 
     return drawResult.toString();
   }
 
-  private List<Pair> drawPairs(List<String> participants) {
+  private List<Pair> drawPairs() {
     List<Pair> pairs = new ArrayList<>();
     while (participants.size() > 0) {
       String first = RandomUtils.removeRandomItem(participants);
@@ -89,12 +88,12 @@ public class FIFADrawer {
     return hour + ":" + minute;
   }
 
-  private void drawTeams(Map<TeamType, Map<BigDecimal, List<Team>>> teams) {
+  private void drawTeams() {
     List<TeamType> availableTeamTypes = new ArrayList<>(teams.keySet());
     TeamType type = RandomUtils.getRandomItem(availableTeamTypes);
-    Map<BigDecimal, List<Team>> rankedTeams = teams.get(type);
-    List<BigDecimal> allowedRanks = new ArrayList<>(rankedTeams.keySet());
-    BigDecimal rank = RandomUtils.getRandomItem(allowedRanks);
+    Map<Rank, List<Team>> rankedTeams = teams.get(type);
+    List<Rank> allowedRanks = new ArrayList<>(rankedTeams.keySet());
+    Rank rank = RandomUtils.getRandomItem(allowedRanks);
     List<Team> allowedTeams = rankedTeams.get(rank);
     if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
       Team home = (Team) RandomUtils.removeRandomItem(allowedTeams);

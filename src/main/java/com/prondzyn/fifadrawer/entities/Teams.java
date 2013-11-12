@@ -1,17 +1,15 @@
 package com.prondzyn.fifadrawer.entities;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class Teams implements Serializable {
 
-  private final Map<BigDecimal, List<Team>> clubs = new LinkedHashMap<>();
-  private final Map<BigDecimal, List<Team>> nations = new LinkedHashMap<>();
+  private final Map<Rank, List<Team>> clubs = new LinkedHashMap<>();
+  private final Map<Rank, List<Team>> nations = new LinkedHashMap<>();
 
   public void add(Team team) {
     switch (team.getType()) {
@@ -23,9 +21,9 @@ public class Teams implements Serializable {
         break;
     }
   }
-  
-  private void add(Map<BigDecimal, List<Team>> collection, Team team) {
-    BigDecimal rank = team.getRank();
+
+  private void add(Map<Rank, List<Team>> collection, Team team) {
+    Rank rank = team.getRank();
     List<Team> teams = collection.get(rank);
     if (teams == null) {
       teams = new ArrayList<>();
@@ -34,8 +32,8 @@ public class Teams implements Serializable {
     teams.add(team);
   }
 
-  public Map<TeamType, Map<BigDecimal, List<Team>>> get() {
-    Map<TeamType, Map<BigDecimal, List<Team>>> result = new LinkedHashMap<>();
+  public Map<TeamType, Map<Rank, List<Team>>> get() {
+    Map<TeamType, Map<Rank, List<Team>>> result = new LinkedHashMap<>();
     if (!clubs.isEmpty()) {
       result.put(TeamType.CLUB, clubs);
     }

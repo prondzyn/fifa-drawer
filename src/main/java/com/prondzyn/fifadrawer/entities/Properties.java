@@ -87,13 +87,8 @@ public class Properties extends java.util.Properties {
     return getProperty(MAIL_SUBJECT);
   }
 
-  public BigDecimal getTeamsRankThreshold() {
-    return getBigDecimalProperty(TEAMS_RANK_THRESHOLD).setScale(1);
-  }
-
-  private BigDecimal getBigDecimalProperty(String key) {
-    String value = getProperty(key);
-    return new BigDecimal(value);
+  public Rank getTeamsRankThreshold() {
+    return Rank.parse(getProperty(TEAMS_RANK_THRESHOLD));
   }
   
   public String getTeamsRankComparision() {

@@ -2,6 +2,7 @@ package com.prondzyn.fifadrawer.utils;
 
 import com.prondzyn.fifadrawer.Constants;
 import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.Team;
 import com.prondzyn.fifadrawer.entities.Teams;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
@@ -10,7 +11,6 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
 
 public class TeamsLoader {
 
@@ -41,7 +41,7 @@ public class TeamsLoader {
         String name = splitted[0];
         String league = splitted[1];
         String country = splitted[2];
-        BigDecimal rank = new BigDecimal(splitted[3]).setScale(1);
+        Rank rank = Rank.parse(splitted[3]);
 
         Team team = new Team(name, rank, country, league);
 

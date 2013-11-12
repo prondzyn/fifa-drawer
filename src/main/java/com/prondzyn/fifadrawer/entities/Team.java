@@ -9,11 +9,11 @@ public class Team implements Serializable {
   private static final String NATIONAL_TEAM_INDICATOR = "Reprezentacje";
 
   private final String name;
-  private final BigDecimal rank;
+  private final Rank rank;
   private final String country;
   private final String league;
 
-  public Team(String name, BigDecimal rank, String country, String league) {
+  public Team(String name, Rank rank, String country, String league) {
     this.name = name;
     this.rank = rank;
     this.country = country;
@@ -24,7 +24,7 @@ public class Team implements Serializable {
     return name;
   }
 
-  public BigDecimal getRank() {
+  public Rank getRank() {
     return rank;
   }
 
