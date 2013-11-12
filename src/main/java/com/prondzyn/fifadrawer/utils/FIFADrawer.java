@@ -106,7 +106,7 @@ public class FIFADrawer {
         if (visitor == null) {
           visitor = home;
         }
-      } while (home.notAsPowerfulAs(visitor) && validator.isNotValid(visitor));
+      } while (home.notAsPowerfulAs(visitor) || validator.isNotValid(visitor));
       StringBuilder builder = new StringBuilder();
       builder.append("Rank: ").append(home.getRank()).append("\n\n");
       builder.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
