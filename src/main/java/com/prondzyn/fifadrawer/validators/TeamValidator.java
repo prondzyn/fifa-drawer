@@ -15,7 +15,7 @@ public class TeamValidator {
 
   public boolean isValid(Team team) {
     if (team == null) {
-      return true;
+      throw new IllegalArgumentException("Team cannot be null.");
     }
     return isValidRank(team.getRank());
   }

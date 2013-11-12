@@ -88,9 +88,7 @@ public class Properties extends java.util.Properties {
   }
 
   public BigDecimal getTeamsRankThreshold() {
-    BigDecimal threshold = getBigDecimalProperty(TEAMS_RANK_THRESHOLD);
-    threshold.setScale(1);
-    return threshold;
+    return getBigDecimalProperty(TEAMS_RANK_THRESHOLD).setScale(1);
   }
 
   private BigDecimal getBigDecimalProperty(String key) {

@@ -11,4 +11,8 @@ public abstract class CollectionUtils {
   public static boolean isNotEmpty(List list) {
     return !isEmpty(list);
   }
+  
+  public static boolean hasMinSize(List list, int minSize){
+    return isNotEmpty(list) && list.size() >= minSize;
+  }
 }

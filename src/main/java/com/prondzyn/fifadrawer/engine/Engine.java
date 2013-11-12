@@ -35,8 +35,7 @@ public class Engine {
         return;
       }
       
-      String teamsFilePath = properties.getTeamsFilePath();
-      Teams teams = TeamsLoader.load(teamsFilePath);
+      Teams teams = new TeamsLoader(properties).load();
 
       FIFADrawer fifaDrawer = new FIFADrawer(properties);
       String message = fifaDrawer.draw(participants.getActiveParticipantsUsernames(), teams.get());
