@@ -92,15 +92,17 @@ public class FIFADrawer {
     List<TeamType> availableTeamTypes = new ArrayList<>(teams.keySet());
     TeamType type = RandomUtils.getRandomItem(availableTeamTypes);
     Map<Rank, List<Team>> rankedTeams = teams.get(type);
-    List<Rank> allowedRanks = new ArrayList<>(rankedTeams.keySet());
-    Rank rank = RandomUtils.getRandomItem(allowedRanks);
-    List<Team> allowedTeams = rankedTeams.get(rank);
-    if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
-      Team home = (Team) RandomUtils.removeRandomItem(allowedTeams);
-      Team visitor = (Team) RandomUtils.getRandomItem(allowedTeams);
-      drawResult.append("\nRank: ").append(home.getRank()).append("\n\n");
-      drawResult.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
-      drawResult.toString();
+    if (rankedTeams != null) {
+      List<Rank> allowedRanks = new ArrayList<>(rankedTeams.keySet());
+      Rank rank = RandomUtils.getRandomItem(allowedRanks);
+      List<Team> allowedTeams = rankedTeams.get(rank);
+      if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
+        Team home = (Team) RandomUtils.removeRandomItem(allowedTeams);
+        Team visitor = (Team) RandomUtils.getRandomItem(allowedTeams);
+        drawResult.append("\nRank: ").append(home.getRank()).append("\n\n");
+        drawResult.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
+        drawResult.toString();
+      }
     }
   }
 

@@ -27,7 +27,6 @@ public class Engine {
 
     try {
       Properties properties = PropertiesLoader.load(configFilePath);
-      properties.validate();
       
       String participantsFilePath = properties.getParticipantsFilePath();
       Participants participants = ParticipantsLoader.load(participantsFilePath);

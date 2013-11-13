@@ -8,10 +8,10 @@ public class PropertiesLoader {
 
   public static Properties load(String filepath) throws IOException {
 
-    Properties props = new Properties();
+    Properties properties = new Properties();
     try (FileInputStream fis = new FileInputStream(filepath)) {
-      props.load(fis);
+      properties.load(fis);
     }
-    return props;
+    return properties;
   }
 }

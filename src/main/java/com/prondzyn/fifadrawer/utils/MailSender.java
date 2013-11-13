@@ -15,30 +15,30 @@ import javax.mail.internet.MimeMessage;
 
 public class MailSender {
 
-  private final Properties applicationProperties;
+  private final Properties appProperties;
 
   public MailSender(Properties applicationProperties) {
-    this.applicationProperties = applicationProperties;
+    this.appProperties = applicationProperties;
   }
 
   public void send(String message, Set<String> recipientsEmails) throws MessagingException, UnsupportedEncodingException {
 
     java.util.Properties properties = System.getProperties();
-    properties.setProperty("mail.smtp.host", applicationProperties.getMailHost());
+    properties.setProperty("mail.smtp.host", appProperties.getMailHost());
     properties.setProperty("charset", Constants.DEFAULT_CHARSET);
     Session session = Session.getDefaultInstance(properties);
 
     InternetAddress[] to = prepareRecipients(recipientsEmails);
 
     MimeMessage mimeMsg = new MimeMessage(session);
-    mimeMsg.setFrom(applicationProperties.getSender());
+    mimeMsg.setFrom(appProperties.getSender());
     mimeMsg.addRecipients(Message.RecipientType.TO, to);
     mimeMsg.setReplyTo(to);
-    mimeMsg.setSubject(applicationProperties.getEmailSubject(), Constants.DEFAULT_CHARSET);
+    mimeMsg.setSubject(appProperties.getEmailSubject(), Constants.DEFAULT_CHARSET);
     mimeMsg.setText(message, Constants.DEFAULT_CHARSET);
     mimeMsg.setSentDate(new Date());
 
-    String adminEmail = applicationProperties.getAdminEmailAddress();
+    String adminEmail = appProperties.getAdminEmailAddress();
     if (!recipientsEmails.contains(adminEmail)) {
       mimeMsg.setRecipient(Message.RecipientType.CC, new InternetAddress(adminEmail));
     }

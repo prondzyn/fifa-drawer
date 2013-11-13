@@ -3,10 +3,15 @@ package com.prondzyn.fifadrawer.entities;
 import com.prondzyn.fifadrawer.Constants;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
 import com.prondzyn.fifadrawer.utils.RandomUtils;
+import com.prondzyn.fifadrawer.utils.StringUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.InvalidPropertiesFormatException;
 import java.util.List;
 import java.util.Set;
 import javax.mail.internet.InternetAddress;
@@ -25,6 +30,10 @@ public class Properties extends java.util.Properties {
 
   private static final String TEAMS_RANK_THRESHOLD = "teams.rank.threshold";
   private static final String TEAMS_RANK_COMPARISION = "teams.rank.comparison";
+  
+  private static final String TEAMS_TYPES_TO_SKIP = "teams.skipped.types";
+  private static final String TEAMS_COUNTRIES_TO_SKIP = "teams.skipped.countries";
+  private static final String TEAMS_LEAGUES_TO_SKIP = "teams.skipped.leagues";
 
   private static final Set<String> required;
 
@@ -41,11 +50,29 @@ public class Properties extends java.util.Properties {
     required.add(TEAMS_RANK_COMPARISION);
   }
 
-  public void validate() {
+  @Override
+  public synchronized void load(InputStream inStream) throws IOException {
+    super.load(inStream);
+    validate();
+  }
+
+  @Override
+  public synchronized void load(Reader reader) throws IOException {
+    super.load(reader);
+    validate();
+  }
+
+  @Override
+  public synchronized void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
+    super.loadFromXML(in);
+    validate();
+  }
+
+  private void validate() {
     for (String req : required) {
       String value = getProperty(req);
       if (value == null) {
-        throw new MissingPropertyException("'" + req + "' property not found!");
+        throw new MissingPropertyException("Property '" + req + "' not found.");
       }
     }
   }
@@ -65,8 +92,8 @@ public class Properties extends java.util.Properties {
 
   private List<String> getArrayProperty(String key) {
     String value = getProperty(key);
-    if (value == null) {
-      return null;
+    if (StringUtils.isBlank(value)) {
+      return new ArrayList<>();
     }
     String[] result = value.split(",");
     for (int i = 0; i < result.length; i++) {
@@ -90,8 +117,29 @@ public class Properties extends java.util.Properties {
   public Rank getTeamsRankThreshold() {
     return Rank.parse(getProperty(TEAMS_RANK_THRESHOLD));
   }
-  
+
   public String getTeamsRankComparision() {
     return getProperty(TEAMS_RANK_COMPARISION);
+  }
+
+  public Set<TeamType> getTeamTypesToSkip() {
+    Set<TeamType> types = new HashSet<>();
+    Set<String> set = getSetProperty(TEAMS_TYPES_TO_SKIP);
+    for (String string : set) {
+      types.add(TeamType.parse(string));
+    }
+    return types;
+  }
+
+  public Set<String> getCountriesToSkip() {
+    return getSetProperty(TEAMS_COUNTRIES_TO_SKIP);
+  }
+
+  public Set<String> getLeaguesToSkip() {
+    return getSetProperty(TEAMS_LEAGUES_TO_SKIP);
+  }
+
+  private Set<String> getSetProperty(String key) {
+    return new HashSet<>(getArrayProperty(key));
   }
 }

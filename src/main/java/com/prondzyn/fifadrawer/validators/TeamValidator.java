@@ -3,7 +3,9 @@ package com.prondzyn.fifadrawer.validators;
 import com.prondzyn.fifadrawer.entities.Properties;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.Team;
+import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.utils.StringUtils;
+import java.util.Set;
 
 public class TeamValidator {
 
@@ -17,7 +19,7 @@ public class TeamValidator {
     if (team == null) {
       throw new IllegalArgumentException("Team cannot be null.");
     }
-    return isValidRank(team.getRank());
+    return isValidRank(team.getRank()) && isValidType(team.getType()) && isValidCountry(team.getCountry()) && isValidLeague(team.getLeague());
   }
 
   private boolean isValidRank(Rank rank) {
@@ -42,7 +44,18 @@ public class TeamValidator {
     }
   }
 
-  public boolean isNotValid(Team team) {
-    return !isValid(team);
+  private boolean isValidType(TeamType type) {
+    Set<TeamType> skipped = properties.getTeamTypesToSkip();
+    return !skipped.contains(type);
+  }
+
+  private boolean isValidCountry(String country) {
+    Set<String> skipped = properties.getCountriesToSkip();
+    return !skipped.contains(country);
+  }
+
+  private boolean isValidLeague(String league) {
+    Set<String> skipped = properties.getLeaguesToSkip();
+    return !skipped.contains(league);
   }
 }

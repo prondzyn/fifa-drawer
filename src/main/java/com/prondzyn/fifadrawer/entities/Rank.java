@@ -51,9 +51,9 @@ public enum Rank {
         }
       }
     } catch (NumberFormatException ex) {
-      throw new InvalidRankException("Invalid rank (" + code + ") found.");
+      throw new InvalidRankException("Invalid rank '" + code + "' found.");
     }
-    throw new InvalidRankException("Unknown rank (" + code + ") found.");
+    throw new InvalidRankException("Unknown rank '" + code + "' found.");
   }
 
   @Override
