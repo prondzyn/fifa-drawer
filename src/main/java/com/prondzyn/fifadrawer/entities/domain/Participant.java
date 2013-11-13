@@ -1,4 +1,4 @@
-package com.prondzyn.fifadrawer.entities;
+package com.prondzyn.fifadrawer.entities.domain;
 
 
 public class Participant {

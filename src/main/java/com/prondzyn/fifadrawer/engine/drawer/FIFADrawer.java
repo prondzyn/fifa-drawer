@@ -1,8 +1,11 @@
-package com.prondzyn.fifadrawer.utils;
+package com.prondzyn.fifadrawer.engine.drawer;
 
 import com.prondzyn.fifadrawer.entities.Rank;
-import com.prondzyn.fifadrawer.entities.Team;
+import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
+import com.prondzyn.fifadrawer.utils.CollectionUtils;
+import com.prondzyn.fifadrawer.utils.CopyUtils;
+import com.prondzyn.fifadrawer.utils.RandomUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

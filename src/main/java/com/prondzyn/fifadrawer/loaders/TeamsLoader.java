@@ -1,10 +1,10 @@
-package com.prondzyn.fifadrawer.utils;
+package com.prondzyn.fifadrawer.loaders;
 
 import com.prondzyn.fifadrawer.Constants;
-import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.Properties;
 import com.prondzyn.fifadrawer.entities.Rank;
-import com.prondzyn.fifadrawer.entities.Team;
-import com.prondzyn.fifadrawer.entities.Teams;
+import com.prondzyn.fifadrawer.entities.domain.Team;
+import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
 import java.io.BufferedReader;
@@ -22,8 +22,8 @@ public class TeamsLoader {
     this.validator = new TeamValidator(properties);
   }
 
-  public Teams load() throws IOException, TeamsFileException {
-    Teams loaded = new Teams();
+  public TeamsHolder load() throws IOException, TeamsFileException {
+    TeamsHolder loaded = new TeamsHolder();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;

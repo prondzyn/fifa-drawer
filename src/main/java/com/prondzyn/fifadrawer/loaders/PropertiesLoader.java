@@ -1,12 +1,12 @@
-package com.prondzyn.fifadrawer.utils;
+package com.prondzyn.fifadrawer.loaders;
 
-import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.Properties;
 import java.io.FileInputStream;
 import java.io.IOException;
 
 public class PropertiesLoader {
-
-  public static Properties load(String filepath) throws IOException {
+  
+  public static Properties loadFrom(String filepath) throws IOException {
 
     Properties properties = new Properties();
     try (FileInputStream fis = new FileInputStream(filepath)) {

@@ -1,16 +1,16 @@
 package com.prondzyn.fifadrawer.engine;
 
-import com.prondzyn.fifadrawer.entities.Participants;
-import com.prondzyn.fifadrawer.entities.Properties;
-import com.prondzyn.fifadrawer.entities.Teams;
+import com.prondzyn.fifadrawer.engine.drawer.FIFADrawer;
+import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
+import com.prondzyn.fifadrawer.Properties;
+import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
-import com.prondzyn.fifadrawer.utils.FIFADrawer;
-import com.prondzyn.fifadrawer.utils.MailSender;
-import com.prondzyn.fifadrawer.utils.ParticipantsLoader;
-import com.prondzyn.fifadrawer.utils.PropertiesLoader;
-import com.prondzyn.fifadrawer.utils.TeamsLoader;
+import com.prondzyn.fifadrawer.mail.MailSender;
+import com.prondzyn.fifadrawer.loaders.ParticipantsLoader;
+import com.prondzyn.fifadrawer.loaders.PropertiesLoader;
+import com.prondzyn.fifadrawer.loaders.TeamsLoader;
 import java.io.IOException;
 
 public class Engine {
@@ -26,20 +26,15 @@ public class Engine {
     String configFilePath = args[0];
 
     try {
-      Properties properties = PropertiesLoader.load(configFilePath);
+      Properties properties = PropertiesLoader.loadFrom(configFilePath);
       
-      String participantsFilePath = properties.getParticipantsFilePath();
-      Participants participants = ParticipantsLoader.load(participantsFilePath);
-      if (participants.isEmpty()) {
-        return;
-      }
+      ParticipantsHolder participants = new ParticipantsLoader(properties).load();
       
-      Teams teams = new TeamsLoader(properties).load();
+      TeamsHolder teams = new TeamsLoader(properties).load();
 
-      FIFADrawer fifaDrawer = new FIFADrawer(participants.getActiveParticipantsUsernames(), teams.get());
-      String message = fifaDrawer.draw();
+      String drawResult = new FIFADrawer(participants.getNames(), teams.get()).draw();
       
-      new MailSender(properties).send(message, participants.getActiveParticipantsEmails());
+      new MailSender(properties).send(drawResult, participants.getEmails());
       
     } catch (IOException | ParticipantsFileException | TeamsFileException ex) {
       throw new LoadingException(ex);

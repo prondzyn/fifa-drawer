@@ -1,7 +1,7 @@
-package com.prondzyn.fifadrawer.utils;
+package com.prondzyn.fifadrawer.mail;
 
 import com.prondzyn.fifadrawer.Constants;
-import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.Properties;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Set;
@@ -17,8 +17,8 @@ public class MailSender {
 
   private final Properties appProperties;
 
-  public MailSender(Properties applicationProperties) {
-    this.appProperties = applicationProperties;
+  public MailSender(Properties properties) {
+    this.appProperties = properties;
   }
 
   public void send(String message, Set<String> recipientsEmails) throws MessagingException, UnsupportedEncodingException {

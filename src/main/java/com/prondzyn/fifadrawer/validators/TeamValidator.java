@@ -1,9 +1,9 @@
 package com.prondzyn.fifadrawer.validators;
 
 import com.prondzyn.fifadrawer.entities.ComparisionType;
-import com.prondzyn.fifadrawer.entities.Properties;
+import com.prondzyn.fifadrawer.Properties;
 import com.prondzyn.fifadrawer.entities.Rank;
-import com.prondzyn.fifadrawer.entities.Team;
+import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import java.util.Set;
 
