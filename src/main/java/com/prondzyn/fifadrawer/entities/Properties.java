@@ -118,8 +118,9 @@ public class Properties extends java.util.Properties {
     return Rank.parse(getProperty(TEAMS_RANK_THRESHOLD));
   }
 
-  public String getTeamsRankComparision() {
-    return getProperty(TEAMS_RANK_COMPARISION);
+  public ComparisionType getTeamsRankComparision() {
+    String value = getProperty(TEAMS_RANK_COMPARISION);
+    return ComparisionType.parse(value);
   }
 
   public Set<TeamType> getTeamTypesToSkip() {

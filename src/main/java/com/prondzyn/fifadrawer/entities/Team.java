@@ -2,7 +2,6 @@ package com.prondzyn.fifadrawer.entities;
 
 import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.io.Serializable;
-import java.math.BigDecimal;
 
 public class Team implements Serializable {
 

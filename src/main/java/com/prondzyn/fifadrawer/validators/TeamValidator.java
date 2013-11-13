@@ -1,10 +1,10 @@
 package com.prondzyn.fifadrawer.validators;
 
+import com.prondzyn.fifadrawer.entities.ComparisionType;
 import com.prondzyn.fifadrawer.entities.Properties;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
-import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.util.Set;
 
 public class TeamValidator {
@@ -24,23 +24,20 @@ public class TeamValidator {
 
   private boolean isValidRank(Rank rank) {
     Rank threshold = properties.getTeamsRankThreshold();
-    String comparision = properties.getTeamsRankComparision();
-    if (threshold == null || StringUtils.isBlank(comparision)) {
-      throw new IllegalStateException("Teams rank threshold and comparision cannot be empty. Please check the application properties.");
-    }
+    ComparisionType comparision = properties.getTeamsRankComparision();
     switch (comparision) {
-      case "eq":
+      case EQ:
         return rank.equalsTo(threshold);
-      case "gt":
+      case GT:
         return rank.greaterThan(threshold);
-      case "lt":
+      case LT:
         return rank.lessThan(threshold);
-      case "ge":
+      case GE:
         return rank.greaterThanEqualsTo(threshold);
-      case "le":
+      case LE:
         return rank.lessThanEqualsTo(threshold);
       default:
-        throw new IllegalStateException("Invalid teams rank comparision = '" + comparision + "'. Please check the application properties.");
+        throw new IllegalStateException("This should never happen but who knows.");
     }
   }
 

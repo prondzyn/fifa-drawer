@@ -42,4 +42,8 @@ public abstract class StringUtils {
   public static String upper(String value) {
     return value == null ? null : value.toUpperCase();
   }
+  
+  public static String lower(String value) {
+    return value == null ? null : value.toLowerCase();
+  }
 }
