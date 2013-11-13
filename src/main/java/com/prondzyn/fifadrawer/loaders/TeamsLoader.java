@@ -1,7 +1,7 @@
 package com.prondzyn.fifadrawer.loaders;
 
-import com.prondzyn.fifadrawer.Constants;
 import com.prondzyn.fifadrawer.Properties;
+import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
@@ -29,7 +29,7 @@ public class TeamsLoader {
     BufferedReader reader = null;
     try {
       fis = new FileInputStream(properties.getTeamsFilePath());
-      ioReader = new InputStreamReader(fis, Constants.DEFAULT_CHARSET);
+      ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
       String line;
       while ((line = reader.readLine()) != null) {

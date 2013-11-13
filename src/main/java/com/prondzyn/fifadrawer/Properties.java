@@ -3,7 +3,6 @@ package com.prondzyn.fifadrawer;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.entities.ComparisionType;
-import com.prondzyn.fifadrawer.Constants;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
 import com.prondzyn.fifadrawer.utils.RandomUtils;
 import com.prondzyn.fifadrawer.utils.StringUtils;
@@ -20,6 +19,8 @@ import java.util.Set;
 import javax.mail.internet.InternetAddress;
 
 public class Properties extends java.util.Properties {
+  
+  public static final String DEFAULT_CHARSET = "utf-8";
 
   private static final String MAIL_HOST = "mail.host";
   private static final String MAIL_SUBJECT = "mail.subject";
@@ -90,7 +91,7 @@ public class Properties extends java.util.Properties {
 
   public InternetAddress getSender() throws UnsupportedEncodingException {
     List<String> senders = getArrayProperty(MAIL_SENDER_NAMES);
-    return new InternetAddress(getProperty(MAIL_SENDER_EMAIL), RandomUtils.getRandomItem(senders), Constants.DEFAULT_CHARSET);
+    return new InternetAddress(getProperty(MAIL_SENDER_EMAIL), RandomUtils.getRandomItem(senders), DEFAULT_CHARSET);
   }
 
   private List<String> getArrayProperty(String key) {

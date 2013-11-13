@@ -1,7 +1,7 @@
 package com.prondzyn.fifadrawer.mail;
 
-import com.prondzyn.fifadrawer.Constants;
 import com.prondzyn.fifadrawer.Properties;
+import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Set;
@@ -25,7 +25,7 @@ public class MailSender {
 
     java.util.Properties properties = System.getProperties();
     properties.setProperty("mail.smtp.host", appProperties.getMailHost());
-    properties.setProperty("charset", Constants.DEFAULT_CHARSET);
+    properties.setProperty("charset", DEFAULT_CHARSET);
     Session session = Session.getDefaultInstance(properties);
 
     InternetAddress[] to = prepareRecipients(recipientsEmails);
@@ -34,8 +34,8 @@ public class MailSender {
     mimeMsg.setFrom(appProperties.getSender());
     mimeMsg.addRecipients(Message.RecipientType.TO, to);
     mimeMsg.setReplyTo(to);
-    mimeMsg.setSubject(appProperties.getEmailSubject(), Constants.DEFAULT_CHARSET);
-    mimeMsg.setText(message, Constants.DEFAULT_CHARSET);
+    mimeMsg.setSubject(appProperties.getEmailSubject(), DEFAULT_CHARSET);
+    mimeMsg.setText(message, DEFAULT_CHARSET);
     mimeMsg.setSentDate(new Date());
 
     String adminEmail = appProperties.getAdminEmailAddress();
