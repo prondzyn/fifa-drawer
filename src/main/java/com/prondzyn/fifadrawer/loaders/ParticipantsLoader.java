@@ -9,8 +9,12 @@ import java.io.InputStreamReader;
 
 import com.prondzyn.fifadrawer.entities.domain.Participant;
 import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
+import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
+import com.prondzyn.fifadrawer.utils.IOUtils;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 
 public class ParticipantsLoader {
 
@@ -20,38 +24,52 @@ public class ParticipantsLoader {
     this.properties = properties;
   }
 
-  public ParticipantsHolder load() throws IOException, ParticipantsFileException {
+  public ParticipantsHolder load() {
+    
     ParticipantsHolder loaded = new ParticipantsHolder();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;
+    String filepath = properties.getParticipantsFilePath();
+    
     try {
-      fis = new FileInputStream(properties.getParticipantsFilePath());
+      
+      fis = new FileInputStream(filepath);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
+      int i = 0;
       String line;
+      
       while ((line = reader.readLine()) != null) {
+        
+        i += 1;
+        
         String[] splitted = line.split(",");
+        
         if (splitted.length != 3) {
-          throw new ParticipantsFileException("Invalid line!");
+          throw new ParticipantsFileException("Incorrect columns number in line #" + i + " in '" + filepath + "'.");
         }
+        
         String name = splitted[0];
         boolean active = BooleanUtils.parse(splitted[1]);
         String email = splitted[2];
+        
         loaded.add(new Participant(name, active, email));
+        
       }
+      
+    } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+      throw new IllegalStateException("This should never happen but who knows.", ex);
+    } catch (IOException ex) {
+      throw new LoadingException("There was a problem with reading file '" + filepath + "'.", ex);
     } finally {
-      if (fis != null) {
-        fis.close();
-      }
-      if (ioReader != null) {
-        ioReader.close();
-      }
-      if (reader != null) {
-        reader.close();
-      }
+      IOUtils.closeQuietly(fis);
+      IOUtils.closeQuietly(ioReader);
+      IOUtils.closeQuietly(reader);
     }
+    
     validate(loaded);
+    
     return loaded;
   }
 

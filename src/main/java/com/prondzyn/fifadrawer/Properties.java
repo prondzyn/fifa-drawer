@@ -3,9 +3,13 @@ package com.prondzyn.fifadrawer;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.entities.ComparisionType;
+import com.prondzyn.fifadrawer.lang.InvalidComparisionTypeException;
+import com.prondzyn.fifadrawer.lang.InvalidPropertyException;
+import com.prondzyn.fifadrawer.lang.InvalidRankException;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
 import com.prondzyn.fifadrawer.utils.RandomUtils;
 import com.prondzyn.fifadrawer.utils.StringUtils;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -19,7 +23,7 @@ import java.util.Set;
 import javax.mail.internet.InternetAddress;
 
 public class Properties extends java.util.Properties {
-  
+
   public static final String DEFAULT_CHARSET = "utf-8";
 
   private static final String MAIL_HOST = "mail.host";
@@ -34,7 +38,7 @@ public class Properties extends java.util.Properties {
 
   private static final String TEAMS_RANK_THRESHOLD = "teams.rank.threshold";
   private static final String TEAMS_RANK_COMPARISION = "teams.rank.comparison";
-  
+
   private static final String TEAMS_TYPES_TO_SKIP = "teams.skipped.types";
   private static final String TEAMS_COUNTRIES_TO_SKIP = "teams.skipped.countries";
   private static final String TEAMS_LEAGUES_TO_SKIP = "teams.skipped.leagues";
@@ -70,15 +74,6 @@ public class Properties extends java.util.Properties {
   public synchronized void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
     super.loadFromXML(in);
     validate();
-  }
-
-  private void validate() {
-    for (String req : required) {
-      String value = getProperty(req);
-      if (value == null) {
-        throw new MissingPropertyException("Property '" + req + "' not found.");
-      }
-    }
   }
 
   public String getParticipantsFilePath() {
@@ -146,5 +141,53 @@ public class Properties extends java.util.Properties {
 
   private Set<String> getSetProperty(String key) {
     return new HashSet<>(getArrayProperty(key));
+  }
+
+  private void validate() {
+    validateRequired();
+    validateTeamsRankComparision();
+    validateTeamsRankThreshold();
+    validateParticipantsFile();
+    validateTeamsFile();
+  }
+
+  private void validateRequired() {
+    for (String req : required) {
+      String value = getProperty(req);
+      if (value == null) {
+        throw new MissingPropertyException("Property '" + req + "' not found. Please check the application config file.");
+      }
+    }
+  }
+
+  private void validateTeamsRankComparision() {
+    try {
+      getTeamsRankComparision();
+    } catch (InvalidComparisionTypeException ex) {
+      throw new InvalidComparisionTypeException(ex.getMessage() + " Please check the '" + TEAMS_RANK_COMPARISION + "' property in the application config file.");
+    }
+  }
+
+  private void validateTeamsRankThreshold() {
+    try {
+      getTeamsRankThreshold();
+    } catch (InvalidRankException ex) {
+      throw new InvalidRankException(ex.getMessage() + " Please check the '" + TEAMS_RANK_THRESHOLD + "' property in the application config file.");
+    }
+  }
+
+  private void validateParticipantsFile() {
+    validateFile(PARTICIPANTS_FILE_PATH);
+  }
+
+  private void validateTeamsFile() {
+    validateFile(TEAMS_FILE_PATH);
+  }
+
+  private void validateFile(String key) {
+    String filepath = getProperty(key);
+    if (!new File(filepath).exists()) {
+      throw new InvalidPropertyException("File '" + filepath + "' not found. Please check the '" + key + "' property in the application config file.");
+    }
   }
 }

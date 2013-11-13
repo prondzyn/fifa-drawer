@@ -1,5 +1,6 @@
 package com.prondzyn.fifadrawer.entities;
 
+import com.prondzyn.fifadrawer.lang.InvalidRankException;
 import java.math.BigDecimal;
 
 public enum Rank {
@@ -50,9 +51,9 @@ public enum Rank {
         }
       }
     } catch (NumberFormatException ex) {
-      throw new IllegalArgumentException("Invalid rank '" + code + "' found.");
+      throw new InvalidRankException("Invalid rank '" + code + "' found.");
     }
-    throw new IllegalArgumentException("Unknown rank '" + code + "' found.");
+    throw new InvalidRankException("Unknown rank '" + code + "' found.");
   }
 
   @Override

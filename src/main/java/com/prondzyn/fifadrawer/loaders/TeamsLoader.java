@@ -5,12 +5,17 @@ import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
+import com.prondzyn.fifadrawer.lang.InvalidRankException;
+import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
+import com.prondzyn.fifadrawer.utils.IOUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 
 public class TeamsLoader {
 
@@ -22,26 +27,36 @@ public class TeamsLoader {
     this.validator = new TeamValidator(properties);
   }
 
-  public TeamsHolder load() throws IOException, TeamsFileException {
+  public TeamsHolder load() {
+
     TeamsHolder loaded = new TeamsHolder();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;
+    String filepath = properties.getTeamsFilePath();
+
     try {
-      fis = new FileInputStream(properties.getTeamsFilePath());
+
+      fis = new FileInputStream(filepath);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
+      int i = 0;
       String line;
+
       while ((line = reader.readLine()) != null) {
 
+        i += 1;
+
         String[] splitted = line.split(",");
+
         if (splitted.length != 4) {
-          throw new TeamsFileException("Invalid line!");
+          throw new TeamsFileException("Incorrect columns number in line #" + i + " in the '" + filepath + "'.");
         }
+
         String name = splitted[0];
         String league = splitted[1];
         String country = splitted[2];
-        Rank rank = Rank.parse(splitted[3]);
+        Rank rank = parseRank(filepath, i, splitted[3]);
 
         Team team = new Team(name, rank, country, league);
 
@@ -49,17 +64,24 @@ public class TeamsLoader {
           loaded.add(team);
         }
       }
+
+    } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+      throw new IllegalStateException("This should never happen but who knows.", ex);
+    } catch (IOException ex) {
+      throw new LoadingException("There was a problem with reading file '" + filepath + "'.", ex);
     } finally {
-      if (fis != null) {
-        fis.close();
-      }
-      if (ioReader != null) {
-        ioReader.close();
-      }
-      if (reader != null) {
-        reader.close();
-      }
+      IOUtils.closeQuietly(fis);
+      IOUtils.closeQuietly(ioReader);
+      IOUtils.closeQuietly(reader);
     }
     return loaded;
+  }
+
+  private Rank parseRank(String filepath, int lineNumber, String value) {
+    try {
+      return Rank.parse(value);
+    } catch (InvalidRankException ex) {
+      throw new InvalidRankException(ex.getMessage() + " Please check line #" + lineNumber + " in the '" + filepath + "'.");
+    }
   }
 }

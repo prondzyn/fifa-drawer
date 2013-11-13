@@ -1,5 +1,6 @@
 package com.prondzyn.fifadrawer.entities;
 
+import com.prondzyn.fifadrawer.lang.InvalidComparisionTypeException;
 import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +26,6 @@ public enum ComparisionType {
         return type;
       }
     }
-    throw new IllegalArgumentException("Unknown comparision type '" + code + "' found.");
+    throw new InvalidComparisionTypeException("Unknown comparision type '" + code + "' found.");
   }
 }
