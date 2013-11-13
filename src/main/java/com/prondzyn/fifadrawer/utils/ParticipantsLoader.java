@@ -28,7 +28,7 @@ public class ParticipantsLoader {
           throw new ParticipantsFileException("Invalid line!");
         }
         String name = splitted[0];
-        boolean active = parseBoolean(splitted[1]);
+        boolean active = BooleanUtils.parse(splitted[1]);
         String email = splitted[2];
         loaded.add(new Participant(name, active, email));
       }
@@ -44,9 +44,5 @@ public class ParticipantsLoader {
       }
     }
     return loaded;
-  }
-
-  private static boolean parseBoolean(String string) {
-    return "Y".equals(string);
   }
 }

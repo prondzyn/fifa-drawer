@@ -38,4 +38,8 @@ public abstract class StringUtils {
     }
     return string1.equals(string2);
   }
+  
+  public static String upper(String value) {
+    return value == null ? null : value.toUpperCase();
+  }
 }
