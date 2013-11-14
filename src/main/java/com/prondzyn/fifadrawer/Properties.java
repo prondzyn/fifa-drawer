@@ -56,7 +56,6 @@ public class Properties extends java.util.Properties {
     required = new HashSet<>();
     required.add(PRINT_CONSOLE);
     required.add(PRINT_EMAIL);
-    required.add(ADMIN_EMAIL);
     required.add(PARTICIPANTS_FILE_PATH);
     required.add(TEAMS_FILE_PATH);
     required.add(TEAMS_RANK_THRESHOLD);
@@ -70,6 +69,7 @@ public class Properties extends java.util.Properties {
     requiredForEmail.add(MAIL_SUBJECT);
     requiredForEmail.add(MAIL_SENDER_EMAIL);
     requiredForEmail.add(MAIL_SENDER_NAMES);
+    requiredForEmail.add(ADMIN_EMAIL);
   }
 
   @Override
