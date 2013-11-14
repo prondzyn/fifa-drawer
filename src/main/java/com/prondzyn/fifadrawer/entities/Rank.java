@@ -1,7 +1,9 @@
 package com.prondzyn.fifadrawer.entities;
 
-import com.prondzyn.fifadrawer.lang.InvalidRankException;
+import com.prondzyn.fifadrawer.lang.ParseException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public enum Rank {
 
@@ -42,18 +44,26 @@ public enum Rank {
     return this.code.compareTo(other.code) >= 0;
   }
 
-  public static Rank parse(String code) {
+  public static Rank parse(String value) {
     try {
-      BigDecimal internalCode = new BigDecimal(code).setScale(1);
+      BigDecimal internalCode = new BigDecimal(value).setScale(1);
       for (Rank rank : values()) {
         if (rank.code.equals(internalCode)) {
           return rank;
         }
       }
     } catch (NumberFormatException ex) {
-      throw new InvalidRankException("Invalid rank '" + code + "' found.");
+      throw new ParseException("Invalid rank '" + value + "' found. Allowed values: " + allowedValues() + ".");
     }
-    throw new InvalidRankException("Unknown rank '" + code + "' found.");
+    throw new ParseException("Unknown rank '" + value + "' found. Allowed values: " + allowedValues() + ".");
+  }
+
+  private static List<String> allowedValues() {
+    List<String> allowed = new ArrayList<>();
+    for (Rank rank : values()) {
+      allowed.add(rank.toString());
+    }
+    return allowed;
   }
 
   @Override

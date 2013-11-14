@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
 
 import com.prondzyn.fifadrawer.entities.domain.Participant;
 import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
+import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
@@ -59,7 +60,7 @@ public class ParticipantsLoader {
       }
       
     } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-      throw new IllegalStateException("This should never happen but who knows.", ex);
+      throw new ApplicationException(ex);
     } catch (IOException ex) {
       throw new LoadingException("There was a problem with reading file '" + filepath + "'.", ex);
     } finally {

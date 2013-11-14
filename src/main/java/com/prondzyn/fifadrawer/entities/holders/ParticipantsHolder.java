@@ -1,13 +1,14 @@
 package com.prondzyn.fifadrawer.entities.holders;
 
 import com.prondzyn.fifadrawer.entities.domain.Participant;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class ParticipantsHolder {
+public class ParticipantsHolder implements Serializable {
 
   private final List<Participant> participants = new ArrayList<>();
 

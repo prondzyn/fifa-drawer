@@ -5,8 +5,9 @@ import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
-import com.prondzyn.fifadrawer.lang.InvalidRankException;
+import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
+import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.utils.IOUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
@@ -66,7 +67,7 @@ public class TeamsLoader {
       }
 
     } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-      throw new IllegalStateException("This should never happen but who knows.", ex);
+      throw new ApplicationException(ex);
     } catch (IOException ex) {
       throw new LoadingException("There was a problem with reading file '" + filepath + "'.", ex);
     } finally {
@@ -80,8 +81,8 @@ public class TeamsLoader {
   private Rank parseRank(String filepath, int lineNumber, String value) {
     try {
       return Rank.parse(value);
-    } catch (InvalidRankException ex) {
-      throw new InvalidRankException(ex.getMessage() + " Please check line #" + lineNumber + " in the '" + filepath + "'.");
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + " Please check line #" + lineNumber + " in the '" + filepath + "'.");
     }
   }
 }

@@ -1,11 +1,13 @@
 package com.prondzyn.fifadrawer.entities.domain;
 
+import java.io.Serializable;
 
-public class Participant {
 
-  private String username;
-  private boolean active;
-  private String email;
+public class Participant implements Serializable {
+
+  private final String username;
+  private final boolean active;
+  private final String email;
 
   public Participant(String username, boolean active, String email) {
     this.username = username;

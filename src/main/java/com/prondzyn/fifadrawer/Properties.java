@@ -3,10 +3,11 @@ package com.prondzyn.fifadrawer;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.entities.ComparisionType;
-import com.prondzyn.fifadrawer.lang.InvalidComparisionTypeException;
+import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.InvalidPropertyException;
-import com.prondzyn.fifadrawer.lang.InvalidRankException;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
+import com.prondzyn.fifadrawer.lang.ParseException;
+import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.RandomUtils;
 import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.io.File;
@@ -18,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.InvalidPropertiesFormatException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.mail.internet.InternetAddress;
 
@@ -26,7 +29,9 @@ public class Properties extends java.util.Properties {
 
   public static final String DEFAULT_CHARSET = "utf-8";
 
-  private static final String MAIL_HOST = "mail.host";
+  private static final String PRINT_CONSOLE = "print.console";
+  private static final String PRINT_EMAIL = "print.email";
+
   private static final String MAIL_SUBJECT = "mail.subject";
   private static final String MAIL_SENDER_EMAIL = "mail.sender.email";
   private static final String MAIL_SENDER_NAMES = "mail.sender.names";
@@ -44,18 +49,27 @@ public class Properties extends java.util.Properties {
   private static final String TEAMS_LEAGUES_TO_SKIP = "teams.skipped.leagues";
 
   private static final Set<String> required;
+  private static final Set<String> requiredForEmail;
 
   static {
+
     required = new HashSet<>();
-    required.add(MAIL_HOST);
-    required.add(MAIL_SUBJECT);
-    required.add(MAIL_SENDER_EMAIL);
-    required.add(MAIL_SENDER_NAMES);
+    required.add(PRINT_CONSOLE);
+    required.add(PRINT_EMAIL);
     required.add(ADMIN_EMAIL);
     required.add(PARTICIPANTS_FILE_PATH);
     required.add(TEAMS_FILE_PATH);
     required.add(TEAMS_RANK_THRESHOLD);
     required.add(TEAMS_RANK_COMPARISION);
+
+    requiredForEmail = new HashSet<>();
+    requiredForEmail.add(MailSMTP.HOST);
+    requiredForEmail.add(MailSMTP.PORT);
+    requiredForEmail.add(MailSMTP.USERNAME);
+    requiredForEmail.add(MailSMTP.PASSWORD);
+    requiredForEmail.add(MAIL_SUBJECT);
+    requiredForEmail.add(MAIL_SENDER_EMAIL);
+    requiredForEmail.add(MAIL_SENDER_NAMES);
   }
 
   @Override
@@ -76,6 +90,14 @@ public class Properties extends java.util.Properties {
     validate();
   }
 
+  public boolean printDrawResultToConsole() {
+    return BooleanUtils.parse(getProperty(PRINT_CONSOLE));
+  }
+
+  public boolean sendDrawResultByEmail() {
+    return BooleanUtils.parse(getProperty(PRINT_EMAIL));
+  }
+
   public String getParticipantsFilePath() {
     return getProperty(PARTICIPANTS_FILE_PATH);
   }
@@ -84,9 +106,13 @@ public class Properties extends java.util.Properties {
     return getProperty(TEAMS_FILE_PATH);
   }
 
-  public InternetAddress getSender() throws UnsupportedEncodingException {
-    List<String> senders = getArrayProperty(MAIL_SENDER_NAMES);
-    return new InternetAddress(getProperty(MAIL_SENDER_EMAIL), RandomUtils.getRandomItem(senders), DEFAULT_CHARSET);
+  public InternetAddress getSender() {
+    try {
+      List<String> senders = getArrayProperty(MAIL_SENDER_NAMES);
+      return new InternetAddress(getProperty(MAIL_SENDER_EMAIL), RandomUtils.getRandomItem(senders), DEFAULT_CHARSET);
+    } catch (UnsupportedEncodingException ex) {
+      throw new ApplicationException(ex);
+    }
   }
 
   private List<String> getArrayProperty(String key) {
@@ -99,10 +125,6 @@ public class Properties extends java.util.Properties {
       result[i] = result[i].trim();
     }
     return Arrays.asList(result);
-  }
-
-  public String getMailHost() {
-    return getProperty(MAIL_HOST);
   }
 
   public String getAdminEmailAddress() {
@@ -144,15 +166,22 @@ public class Properties extends java.util.Properties {
   }
 
   private void validate() {
-    validateRequired();
-    validateTeamsRankComparision();
-    validateTeamsRankThreshold();
+    validateRequired(required);
+    validatePrintDrawResultToConsole();
+    validateSendDrawResultByEmail();
+    validatePrinting();
+    if (sendDrawResultByEmail()) {
+      validateRequired(requiredForEmail);
+    }
     validateParticipantsFile();
     validateTeamsFile();
+    validateTeamsRankComparision();
+    validateTeamsRankThreshold();
+    validateTeamTypesToSkip();
   }
 
-  private void validateRequired() {
-    for (String req : required) {
+  private void validateRequired(Set<String> requiredProperties) {
+    for (String req : requiredProperties) {
       String value = getProperty(req);
       if (value == null) {
         throw new MissingPropertyException("Property '" + req + "' not found. Please check the application config file.");
@@ -160,19 +189,25 @@ public class Properties extends java.util.Properties {
     }
   }
 
-  private void validateTeamsRankComparision() {
+  private void validatePrintDrawResultToConsole() {
     try {
-      getTeamsRankComparision();
-    } catch (InvalidComparisionTypeException ex) {
-      throw new InvalidComparisionTypeException(ex.getMessage() + " Please check the '" + TEAMS_RANK_COMPARISION + "' property in the application config file.");
+      printDrawResultToConsole();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(PRINT_CONSOLE));
     }
   }
 
-  private void validateTeamsRankThreshold() {
+  private void validateSendDrawResultByEmail() {
     try {
-      getTeamsRankThreshold();
-    } catch (InvalidRankException ex) {
-      throw new InvalidRankException(ex.getMessage() + " Please check the '" + TEAMS_RANK_THRESHOLD + "' property in the application config file.");
+      sendDrawResultByEmail();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(PRINT_EMAIL));
+    }
+  }
+  
+  private void validatePrinting() {
+    if (!printDrawResultToConsole() && !sendDrawResultByEmail()) {
+      throw new ApplicationException("Both printing methods are disabled. Please enable at least one printing method in the application config file.");
     }
   }
 
@@ -187,7 +222,107 @@ public class Properties extends java.util.Properties {
   private void validateFile(String key) {
     String filepath = getProperty(key);
     if (!new File(filepath).exists()) {
-      throw new InvalidPropertyException("File '" + filepath + "' not found. Please check the '" + key + "' property in the application config file.");
+      throw new InvalidPropertyException("File '" + filepath + "' not found." + pleaseCheckTheProperty(key));
     }
+  }
+
+  private void validateTeamsRankComparision() {
+    try {
+      getTeamsRankComparision();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_COMPARISION));
+    }
+  }
+
+  private void validateTeamsRankThreshold() {
+    try {
+      getTeamsRankThreshold();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_THRESHOLD));
+    }
+  }
+
+  private void validateTeamTypesToSkip() {
+    try {
+      getTeamTypesToSkip();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_TYPES_TO_SKIP));
+    }
+  }
+
+  public static String couldNotConnectToMailServer() {
+    return "Could not connect to the mail server." + pleaseCheckTheProperties();
+  }
+
+  public static String invalidMailCredentialsMessage() {
+    return "Mail server username or password is invalid." + pleaseCheckTheProperties();
+  }
+
+  private static String pleaseCheckTheProperty(String propertyName) {
+    return new StringBuilder(" Please check the '").append(propertyName).append("' property in the application config file.").toString();
+  }
+  
+  private static String pleaseCheckTheProperties(){
+    return " Please check the properties in the application config file.";
+  }
+
+  public class MailSMTP {
+
+    private static final String PREFIX = "mail.smtp.";
+
+    private static final String HOST = PREFIX + "host";
+    private static final String PORT = PREFIX + "port";
+    private static final String USERNAME = PREFIX + "user";
+    private static final String PASSWORD = PREFIX + "password";
+
+    public MailSMTP() {
+      validate();
+    }
+
+    public String getHost() {
+      return getProperty(HOST);
+    }
+
+    public int getPort() {
+      return Integer.valueOf(getProperty(PORT));
+    }
+
+    public String getUsername() {
+      return getProperty(USERNAME);
+    }
+
+    public String getPassword() {
+      return getProperty(PASSWORD);
+    }
+
+    public void copyTo(java.util.Properties properties) {
+      for (Map.Entry<String, String> entry : getAll().entrySet()) {
+        properties.setProperty(entry.getKey(), entry.getValue());
+      }
+    }
+
+    private Map<String, String> getAll() {
+      Map<String, String> properties = new LinkedHashMap<>();
+      for (Object key : keySet()) {
+        String name = key.toString();
+        if (name.startsWith(PREFIX)) {
+          properties.put(name, getProperty(name));
+        }
+      }
+      return properties;
+    }
+
+    private void validate() {
+      validatePort();
+    }
+
+    private void validatePort() {
+      try {
+        getPort();
+      } catch (NumberFormatException ex) {
+        throw new InvalidPropertyException("Mail server port is invalid. Please check the '" + PORT + "' property in the application config file.");
+      }
+    }
+
   }
 }
