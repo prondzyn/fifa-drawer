@@ -14,6 +14,7 @@ import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.IOUtils;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 
@@ -31,11 +32,11 @@ public class ParticipantsLoader {
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;
-    String filepath = properties.getParticipantsFilePath();
+    File file = properties.getParticipantsFile();
     
     try {
       
-      fis = new FileInputStream(filepath);
+      fis = new FileInputStream(file);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
       int i = 0;
@@ -48,7 +49,7 @@ public class ParticipantsLoader {
         String[] splitted = line.split(",");
         
         if (splitted.length != 3) {
-          throw new ParticipantsFileException("Incorrect columns number in line #" + i + " in '" + filepath + "'.");
+          throw new ParticipantsFileException("Incorrect columns number in line #" + i + " in '" + file + "'.");
         }
         
         String name = splitted[0];
@@ -62,7 +63,7 @@ public class ParticipantsLoader {
     } catch (FileNotFoundException | UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
     } catch (IOException ex) {
-      throw new LoadingException("There was a problem with reading file '" + filepath + "'.", ex);
+      throw new LoadingException("There was a problem with reading file '" + file + "'.", ex);
     } finally {
       IOUtils.closeQuietly(fis);
       IOUtils.closeQuietly(ioReader);

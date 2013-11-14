@@ -98,12 +98,12 @@ public class Properties extends java.util.Properties {
     return BooleanUtils.parse(getProperty(PRINT_EMAIL));
   }
 
-  public String getParticipantsFilePath() {
-    return getProperty(PARTICIPANTS_FILE_PATH);
+  public File getParticipantsFile() {
+    return new File(rootDirectory(), getProperty(PARTICIPANTS_FILE_PATH));
   }
 
-  public String getTeamsFilePath() {
-    return getProperty(TEAMS_FILE_PATH);
+  public File getTeamsFile() {
+    return new File(rootDirectory(), getProperty(TEAMS_FILE_PATH));
   }
 
   public InternetAddress getSender() {
@@ -204,7 +204,7 @@ public class Properties extends java.util.Properties {
       throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(PRINT_EMAIL));
     }
   }
-  
+
   private void validatePrinting() {
     if (!printDrawResultToConsole() && !sendDrawResultByEmail()) {
       throw new ApplicationException("Both printing methods are disabled. Please enable at least one printing method in the application config file.");
@@ -212,17 +212,16 @@ public class Properties extends java.util.Properties {
   }
 
   private void validateParticipantsFile() {
-    validateFile(PARTICIPANTS_FILE_PATH);
+    validateFile(getParticipantsFile(), PARTICIPANTS_FILE_PATH);
   }
 
   private void validateTeamsFile() {
-    validateFile(TEAMS_FILE_PATH);
+    validateFile(getTeamsFile(), TEAMS_FILE_PATH);
   }
 
-  private void validateFile(String key) {
-    String filepath = getProperty(key);
-    if (!new File(filepath).exists()) {
-      throw new InvalidPropertyException("File '" + filepath + "' not found." + pleaseCheckTheProperty(key));
+  private void validateFile(File file, String key) {
+    if (!file.exists()) {
+      throw new InvalidPropertyException("File '" + file + "' not found." + pleaseCheckTheProperty(key));
     }
   }
 
@@ -261,9 +260,15 @@ public class Properties extends java.util.Properties {
   private static String pleaseCheckTheProperty(String propertyName) {
     return new StringBuilder(" Please check the '").append(propertyName).append("' property in the application config file.").toString();
   }
-  
-  private static String pleaseCheckTheProperties(){
+
+  private static String pleaseCheckTheProperties() {
     return " Please check the properties in the application config file.";
+  }
+
+  public static File rootDirectory() {
+    String sourcePath = Properties.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+    File sourcePlace = new File(sourcePath);
+    return sourcePlace.isFile() ? sourcePlace.getParentFile() : sourcePlace;
   }
 
   public class MailSMTP {

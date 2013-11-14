@@ -12,6 +12,7 @@ import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.utils.IOUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -34,11 +35,11 @@ public class TeamsLoader {
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;
-    String filepath = properties.getTeamsFilePath();
+    File file = properties.getTeamsFile();
 
     try {
 
-      fis = new FileInputStream(filepath);
+      fis = new FileInputStream(file);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
       int i = 0;
@@ -51,13 +52,13 @@ public class TeamsLoader {
         String[] splitted = line.split(",");
 
         if (splitted.length != 4) {
-          throw new TeamsFileException("Incorrect columns number in line #" + i + " in the '" + filepath + "'.");
+          throw new TeamsFileException("Incorrect columns number in line #" + i + " in the '" + file + "'.");
         }
 
         String name = splitted[0];
         String league = splitted[1];
         String country = splitted[2];
-        Rank rank = parseRank(filepath, i, splitted[3]);
+        Rank rank = parseRank(file, i, splitted[3]);
 
         Team team = new Team(name, rank, country, league);
 
@@ -69,7 +70,7 @@ public class TeamsLoader {
     } catch (FileNotFoundException | UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
     } catch (IOException ex) {
-      throw new LoadingException("There was a problem with reading file '" + filepath + "'.", ex);
+      throw new LoadingException("There was a problem with reading file '" + file + "'.", ex);
     } finally {
       IOUtils.closeQuietly(fis);
       IOUtils.closeQuietly(ioReader);
@@ -78,11 +79,11 @@ public class TeamsLoader {
     return loaded;
   }
 
-  private Rank parseRank(String filepath, int lineNumber, String value) {
+  private Rank parseRank(File file, int lineNumber, String value) {
     try {
       return Rank.parse(value);
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + " Please check line #" + lineNumber + " in the '" + filepath + "'.");
+      throw new ParseException(ex.getMessage() + " Please check line #" + lineNumber + " in the '" + file + "'.");
     }
   }
 }
