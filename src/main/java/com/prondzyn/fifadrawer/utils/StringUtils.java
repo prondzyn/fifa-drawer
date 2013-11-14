@@ -1,5 +1,8 @@
 package com.prondzyn.fifadrawer.utils;
 
+import java.util.Arrays;
+import java.util.List;
+
 public abstract class StringUtils {
 
   public static boolean isBlank(String string) {
@@ -10,23 +13,15 @@ public abstract class StringUtils {
     return !isBlank(string);
   }
 
-  public static boolean equal(String string1, String string2) {
-    return equal(string1, string2, false);
+  public static boolean areEqualIgnoreCase(String string1, String string2) {
+    return areEqual(string1, string2, true);
   }
 
-  public static boolean equalIgnoreCase(String string1, String string2) {
-    return equal(string1, string2, true);
+  public static boolean areNotEqualIgnoreCase(String string1, String string2) {
+    return !areEqualIgnoreCase(string1, string2);
   }
 
-  public static boolean notEqual(String string1, String string2) {
-    return !equal(string1, string2);
-  }
-
-  public static boolean notEqualIgnoreCase(String string1, String string2) {
-    return !equalIgnoreCase(string1, string2);
-  }
-
-  private static boolean equal(String string1, String string2, boolean caseInsensitive) {
+  private static boolean areEqual(String string1, String string2, boolean caseInsensitive) {
     if (string1 == null && string2 == null) {
       return true;
     }
@@ -38,12 +33,20 @@ public abstract class StringUtils {
     }
     return string1.equals(string2);
   }
-  
-  public static String upper(String value) {
-    return value == null ? null : value.toUpperCase();
+
+  public static String upper(String string) {
+    return string == null ? null : string.toUpperCase();
   }
-  
-  public static String lower(String value) {
-    return value == null ? null : value.toLowerCase();
+
+  public static String lower(String string) {
+    return string == null ? null : string.toLowerCase();
+  }
+
+  public static List<String> split(String string) {
+    String[] result = string.split(",");
+    for (int i = 0; i < result.length; i++) {
+      result[i] = result[i].trim();
+    }
+    return Arrays.asList(result);
   }
 }

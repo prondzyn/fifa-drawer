@@ -2,7 +2,6 @@ package com.prondzyn.fifadrawer.utils;
 
 import com.prondzyn.fifadrawer.lang.ParseException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public abstract class BooleanUtils {

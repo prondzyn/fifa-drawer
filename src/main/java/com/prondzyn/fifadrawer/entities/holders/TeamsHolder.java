@@ -45,4 +45,8 @@ public class TeamsHolder implements Serializable {
     }
     return result;
   }
+
+  public boolean isEmpty() {
+    return get().isEmpty();
+  }
 }

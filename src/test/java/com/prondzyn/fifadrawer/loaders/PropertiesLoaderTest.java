@@ -1,6 +1,8 @@
 package com.prondzyn.fifadrawer.loaders;
 
 import com.prondzyn.fifadrawer.Properties;
+import com.prondzyn.fifadrawer.entities.ComparisionType;
+import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.InvalidPropertyException;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
@@ -8,7 +10,7 @@ import com.prondzyn.fifadrawer.lang.ParseException;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class PropertiesLoaderTest {
+public class PropertiesLoaderTest extends AbstractLoaderTest {
 
   @Test
   public void minimalValidConfigForPrintToConsole() {
@@ -56,18 +58,32 @@ public class PropertiesLoaderTest {
   public void missingParticipantsFile() {
     PropertiesLoader.loadFrom(getFilepath("missing-participants-file.cfg"));
   }
-  
+
   @Test(expected = ParseException.class)
   public void emptyPrintProperties() {
     PropertiesLoader.loadFrom(getFilepath("empty-prints.cfg"));
   }
-  
+
   @Test(expected = MissingPropertyException.class)
   public void missingPropertyForSendEmail() {
     PropertiesLoader.loadFrom(getFilepath("missing-property-for-send-email.cfg"));
   }
 
-  private String getFilepath(String filename) {
-    return getClass().getResource("/com/prondzyn/fifadrawer/loaders/" + filename).getPath();
+  @Test
+  public void checkTeamRankThresholdLoading() {
+    Properties properties = PropertiesLoader.loadFrom(getFilepath("print-console-min-valid.cfg"));
+    assertEquals(Rank.TWO_HALF, properties.getTeamsRankThreshold());
+  }
+
+  @Test
+  public void checkTeamsRankComparisionLoading() {
+    Properties properties = PropertiesLoader.loadFrom(getFilepath("print-console-min-valid.cfg"));
+    assertEquals(ComparisionType.GT, properties.getTeamsRankComparision());
+  }
+
+  @Test
+  public void checkIfSenderIsNullWhenNotRequired() {
+    Properties properties = PropertiesLoader.loadFrom(getFilepath("print-console-min-valid.cfg"));
+    assertNull(properties.getSender());
   }
 }

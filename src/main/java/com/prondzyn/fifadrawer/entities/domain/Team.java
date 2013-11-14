@@ -42,7 +42,7 @@ public class Team implements Serializable {
   }
 
   private boolean isNationalTeam() {
-    return StringUtils.equalIgnoreCase(NATIONAL_TEAM_INDICATOR, country) || StringUtils.equalIgnoreCase(NATIONAL_TEAM_INDICATOR, league);
+    return StringUtils.areEqualIgnoreCase(NATIONAL_TEAM_INDICATOR, country) || StringUtils.areEqualIgnoreCase(NATIONAL_TEAM_INDICATOR, league);
   }
 
   public boolean asPowerfulAs(Team team) {
@@ -63,7 +63,7 @@ public class Team implements Serializable {
         builder.append(country);
         countryExists = true;
       }
-      if (StringUtils.isNotBlank(league) && StringUtils.notEqualIgnoreCase(country, league)) {
+      if (StringUtils.isNotBlank(league) && StringUtils.areNotEqualIgnoreCase(country, league)) {
         if (countryExists) {
           builder.append(", ");
         }

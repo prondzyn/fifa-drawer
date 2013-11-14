@@ -14,9 +14,11 @@ import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.IOUtils;
+import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public class ParticipantsLoader {
 
@@ -27,39 +29,39 @@ public class ParticipantsLoader {
   }
 
   public ParticipantsHolder load() {
-    
+
     ParticipantsHolder loaded = new ParticipantsHolder();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
     BufferedReader reader = null;
     File file = properties.getParticipantsFile();
-    
+
     try {
-      
+
       fis = new FileInputStream(file);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
       reader = new BufferedReader(ioReader);
       int i = 0;
       String line;
-      
+
       while ((line = reader.readLine()) != null) {
-        
+
         i += 1;
-        
-        String[] splitted = line.split(",");
-        
-        if (splitted.length != 3) {
+
+        List<String> splitted = StringUtils.split(line);
+
+        if (splitted.size() != 3) {
           throw new ParticipantsFileException("Incorrect columns number in line #" + i + " in '" + file + "'.");
         }
-        
-        String name = splitted[0];
-        boolean active = BooleanUtils.parse(splitted[1]);
-        String email = splitted[2];
-        
+
+        String name = splitted.get(0);
+        boolean active = BooleanUtils.parse(splitted.get(1));
+        String email = splitted.get(2);
+
         loaded.add(new Participant(name, active, email));
-        
+
       }
-      
+
     } catch (FileNotFoundException | UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
     } catch (IOException ex) {
@@ -69,9 +71,9 @@ public class ParticipantsLoader {
       IOUtils.closeQuietly(ioReader);
       IOUtils.closeQuietly(reader);
     }
-    
+
     validate(loaded);
-    
+
     return loaded;
   }
 

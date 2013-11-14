@@ -114,8 +114,12 @@ public class Properties extends java.util.Properties {
 
   public InternetAddress getSender() {
     try {
-      List<String> senders = getArrayProperty(MAIL_SENDER_NAMES);
-      return new InternetAddress(getProperty(MAIL_SENDER_EMAIL), RandomUtils.getRandomItem(senders), DEFAULT_CHARSET);
+      String email = getProperty(MAIL_SENDER_EMAIL);
+      String name = RandomUtils.getRandomItem(getArrayProperty(MAIL_SENDER_NAMES));
+      if (StringUtils.isBlank(email) || StringUtils.isBlank(name)) {
+        return null;
+      }
+      return new InternetAddress(email, name, DEFAULT_CHARSET);
     } catch (UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
     }
@@ -123,14 +127,7 @@ public class Properties extends java.util.Properties {
 
   private List<String> getArrayProperty(String key) {
     String value = getProperty(key);
-    if (StringUtils.isBlank(value)) {
-      return new ArrayList<>();
-    }
-    String[] result = value.split(",");
-    for (int i = 0; i < result.length; i++) {
-      result[i] = result[i].trim();
-    }
-    return Arrays.asList(result);
+    return StringUtils.isBlank(value) ? new ArrayList<String>() : StringUtils.split(value);
   }
 
   public String getAdminEmailAddress() {

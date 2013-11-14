@@ -10,6 +10,7 @@ import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.utils.IOUtils;
+import com.prondzyn.fifadrawer.utils.StringUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 public class TeamsLoader {
 
@@ -49,16 +51,16 @@ public class TeamsLoader {
 
         i += 1;
 
-        String[] splitted = line.split(",");
+        List<String> splitted = StringUtils.split(line);
 
-        if (splitted.length != 4) {
+        if (splitted.size() != 4) {
           throw new TeamsFileException("Incorrect columns number in line #" + i + " in the '" + file + "'.");
         }
 
-        String name = splitted[0];
-        String league = splitted[1];
-        String country = splitted[2];
-        Rank rank = parseRank(file, i, splitted[3]);
+        String name = splitted.get(0);
+        String league = splitted.get(1);
+        String country = splitted.get(2);
+        Rank rank = parseRank(file, i, splitted.get(3));
 
         Team team = new Team(name, rank, country, league);
 
