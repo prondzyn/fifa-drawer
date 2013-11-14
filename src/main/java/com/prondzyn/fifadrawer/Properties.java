@@ -229,6 +229,9 @@ public class Properties extends java.util.Properties {
     if (!file.exists()) {
       throw new InvalidPropertyException("File '" + file + "' not found." + pleaseCheckTheProperty(key));
     }
+    if (!file.isFile()) {
+      throw new InvalidPropertyException("Given file is not a regular file." + pleaseCheckTheProperty(key));
+    }
   }
 
   private void validateTeamsRankComparision() {
