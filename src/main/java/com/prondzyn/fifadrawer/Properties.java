@@ -71,7 +71,7 @@ public class Properties extends java.util.Properties {
     requiredForEmail.add(MAIL_SENDER_NAMES);
     requiredForEmail.add(ADMIN_EMAIL);
   }
-  
+
   private final File directory;
 
   public Properties(String filepath) {
@@ -270,13 +270,6 @@ public class Properties extends java.util.Properties {
   private static String pleaseCheckTheProperties() {
     return " Please check the properties in the application config file.";
   }
-/*
-  public static File rootDirectory() {
-    String sourcePath = Properties.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-    File sourcePlace = new File(sourcePath);
-    return sourcePlace.isFile() ? sourcePlace.getParentFile() : sourcePlace;
-  }
-*/
 
   public class MailSMTP {
 
