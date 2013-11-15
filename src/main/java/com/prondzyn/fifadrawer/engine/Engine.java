@@ -31,7 +31,6 @@ public class Engine {
       String drawResult = new FIFADrawer(participants.getNames(), teams.get()).draw();
 
       if (properties.printDrawResultToConsole()) {
-        System.out.println();
         System.out.println(drawResult);
       }
 
