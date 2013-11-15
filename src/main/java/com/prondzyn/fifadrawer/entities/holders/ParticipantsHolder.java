@@ -39,4 +39,8 @@ public class ParticipantsHolder implements Serializable {
   public boolean isEmpty() {
     return participants.isEmpty();
   }
+  
+  public int size() {
+    return getNames().size();
+  }
 }

@@ -21,6 +21,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class ParticipantsLoader {
+  
+  private final static int MAX_PARTICIPANTS_NUMBER = 128;
 
   private final Properties properties;
 
@@ -80,6 +82,9 @@ public class ParticipantsLoader {
   private void validate(ParticipantsHolder participants) {
     if (participants.isEmpty()) {
       throw new ParticipantsFileException("Participants file is empty.");
+    }
+    if (participants.size() > MAX_PARTICIPANTS_NUMBER) {
+      throw new ParticipantsFileException("Too much active participants.");
     }
   }
 }
