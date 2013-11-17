@@ -1,6 +1,6 @@
 FIFA Drawer
 ===========
-FIFA Drawer is a small application to draw participants and teams to play FIFA game on Xbox :)
+FIFA Drawer is a small application, written in Java 7, to draw participants and teams to play FIFA game on Xbox :)
 
 Requirements
 ------------
