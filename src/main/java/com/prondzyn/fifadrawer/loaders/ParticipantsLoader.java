@@ -49,6 +49,11 @@ public class ParticipantsLoader {
       while ((line = reader.readLine()) != null) {
 
         i += 1;
+        
+        // skip first (header) line
+        if (i == 1) {
+          continue;
+        }
 
         List<String> splitted = StringUtils.split(line);
 
