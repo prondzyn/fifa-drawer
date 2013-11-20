@@ -4,6 +4,8 @@ FIFA Drawer is a small application to draw participants and teams to play FIFA g
 
 Requirements
 ------------
+
+### Required Files
 FIFA Drawer requires three files:
 
 1.  The main configuration file. See [example config file](config/example-fifa-drawer.cfg).
@@ -28,3 +30,24 @@ The teams CSV file requires four columns:
 4.  `RANK` - a rank of the team (possible values: `0.5`, `1.0`, `1.5`, `2.0`, `2.5`, `3.0`, `3.5`, `4.0`, `4.5`, `5.0`)
 
 The application always skips a first line (header) of both CSV files.
+
+### Other Requirements
+The application requires Java 1.7 to run. It can be found somewhere on [oracle.com](http://oracle.com).
+
+Usage
+-----
+Command to run FIFA Drawer:
+
+    java -jar FIFADrawer.jar path/to/the/main/configuration/file
+    
+Example
+------------------
+The result of a single draw should looks similar to below:
+
+    10:30: Eddard + Catelyn vs. Robb + Jon
+    10:45: Arya + Sansa vs. Rickon + Brandon
+
+    Rank: 5.0
+
+    1st TEAM: FC Bayern Munich (München) (Niemcy, Bundesliga)
+    2nd TEAM: Manchester United F.C. (Anglia, Barclays Premier League)
