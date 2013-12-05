@@ -77,7 +77,10 @@ public class FIFADrawer {
       }
     }
     for (int i = 0; i < matches.size(); i++) {
-      drawResult.append(getMatchTime(i)).append(": ").append(matches.get(i)).append("\n");
+      drawResult.append(getMatchTime(i)).append(": ").append(matches.get(i));
+      if (i < matches.size() - 1) {
+        drawResult.append("\n");
+      }
     }
   }
 
@@ -102,7 +105,7 @@ public class FIFADrawer {
       if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
         Team home = (Team) RandomUtils.removeRandomItem(allowedTeams);
         Team visitor = (Team) RandomUtils.getRandomItem(allowedTeams);
-        drawResult.append("\nRank: ").append(home.getRank()).append("\n\n");
+        drawResult.append("\n\nRank: ").append(home.getRank()).append("\n\n");
         drawResult.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
         drawResult.toString();
       }
