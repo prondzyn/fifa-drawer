@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedHashMap;
@@ -47,6 +46,7 @@ public class Properties extends java.util.Properties {
   private static final String TEAMS_TYPES_TO_SKIP = "teams.skipped.types";
   private static final String TEAMS_COUNTRIES_TO_SKIP = "teams.skipped.countries";
   private static final String TEAMS_LEAGUES_TO_SKIP = "teams.skipped.leagues";
+  private static final String TEAMS_NAMES_TO_SKIP = "teams.skipped.names";
 
   private static final Set<String> required;
   private static final Set<String> requiredForEmail;
@@ -162,6 +162,10 @@ public class Properties extends java.util.Properties {
 
   public Set<String> getLeaguesToSkip() {
     return getSetProperty(TEAMS_LEAGUES_TO_SKIP);
+  }
+
+  public Set<String> getNamesToSkip() {
+    return getSetProperty(TEAMS_NAMES_TO_SKIP);
   }
 
   private Set<String> getSetProperty(String key) {

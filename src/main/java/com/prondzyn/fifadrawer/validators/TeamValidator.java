@@ -6,23 +6,23 @@ import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
-import java.util.Set;
+import com.prondzyn.fifadrawer.utils.CollectionUtils;
 
 public class TeamValidator {
-  
+
   private final Properties properties;
-  
+
   public TeamValidator(Properties properties) {
     this.properties = properties;
   }
-  
+
   public boolean isValid(Team team) {
     if (team == null) {
       throw new IllegalArgumentException("Team cannot be null.");
     }
-    return isValidRank(team.getRank()) && isValidType(team.getType()) && isValidCountry(team.getCountry()) && isValidLeague(team.getLeague());
+    return isValidRank(team.getRank()) && isValidType(team.getType()) && isValidCountry(team.getCountry()) && isValidLeague(team.getLeague()) && isValidName(team.getName());
   }
-  
+
   private boolean isValidRank(Rank rank) {
     Rank threshold = properties.getTeamsRankThreshold();
     ComparisionType comparision = properties.getTeamsRankComparision();
@@ -41,19 +41,20 @@ public class TeamValidator {
         throw new ApplicationException();
     }
   }
-  
+
   private boolean isValidType(TeamType type) {
-    Set<TeamType> skipped = properties.getTeamTypesToSkip();
-    return !skipped.contains(type);
+    return CollectionUtils.notContains(properties.getTeamTypesToSkip(), type);
   }
-  
+
   private boolean isValidCountry(String country) {
-    Set<String> skipped = properties.getCountriesToSkip();
-    return !skipped.contains(country);
+    return CollectionUtils.notContains(properties.getCountriesToSkip(), country);
   }
-  
+
   private boolean isValidLeague(String league) {
-    Set<String> skipped = properties.getLeaguesToSkip();
-    return !skipped.contains(league);
+    return CollectionUtils.notContains(properties.getLeaguesToSkip(), league);
+  }
+
+  private boolean isValidName(String name) {
+    return CollectionUtils.notContains(properties.getNamesToSkip(), name);
   }
 }
