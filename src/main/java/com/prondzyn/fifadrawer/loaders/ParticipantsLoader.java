@@ -2,7 +2,6 @@ package com.prondzyn.fifadrawer.loaders;
 
 import com.prondzyn.fifadrawer.Properties;
 import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -13,15 +12,15 @@ import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
+import com.prondzyn.fifadrawer.io.CSVReader;
 import com.prondzyn.fifadrawer.utils.IOUtils;
-import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class ParticipantsLoader {
-  
+
   private final static int MAX_PARTICIPANTS_NUMBER = 128;
 
   private final Properties properties;
@@ -35,35 +34,26 @@ public class ParticipantsLoader {
     ParticipantsHolder loaded = new ParticipantsHolder();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
-    BufferedReader reader = null;
+    CSVReader reader = null;
     File file = properties.getParticipantsFile();
 
     try {
 
       fis = new FileInputStream(file);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
-      reader = new BufferedReader(ioReader);
-      int i = 0;
-      String line;
+      reader = new CSVReader(ioReader);
 
-      while ((line = reader.readLine()) != null) {
+      List<String> line;
 
-        i += 1;
-        
-        // skip first (header) line
-        if (i == 1) {
-          continue;
+      while ((line = reader.readNext()) != null) {
+
+        if (line.size() != 3) {
+          throw new ParticipantsFileException("Incorrect columns number in line #" + reader.getLineNumber() + " in '" + file + "'.");
         }
 
-        List<String> splitted = StringUtils.split(line);
-
-        if (splitted.size() != 3) {
-          throw new ParticipantsFileException("Incorrect columns number in line #" + i + " in '" + file + "'.");
-        }
-
-        String name = splitted.get(0);
-        boolean active = BooleanUtils.parse(splitted.get(1));
-        String email = splitted.get(2);
+        String name = line.get(0);
+        boolean active = BooleanUtils.parse(line.get(1));
+        String email = line.get(2);
 
         loaded.add(new Participant(name, active, email));
 

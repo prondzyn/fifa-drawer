@@ -49,4 +49,13 @@ public abstract class StringUtils {
     }
     return Arrays.asList(result);
   }
+
+  public static String trim(String string) {
+    return string != null ? string.trim() : null;
+  }
+
+  public static String trimToNull(String string) {
+    String trimmed = trim(string);
+    return trimmed.length() > 0 ? trimmed : null;
+  }
 }

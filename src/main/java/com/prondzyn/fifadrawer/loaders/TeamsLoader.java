@@ -5,14 +5,13 @@ import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
+import com.prondzyn.fifadrawer.io.CSVReader;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.utils.IOUtils;
-import com.prondzyn.fifadrawer.utils.StringUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -36,36 +35,26 @@ public class TeamsLoader {
     TeamsHolder loaded = new TeamsHolder();
     FileInputStream fis = null;
     InputStreamReader ioReader = null;
-    BufferedReader reader = null;
+    CSVReader reader = null;
     File file = properties.getTeamsFile();
 
     try {
 
       fis = new FileInputStream(file);
       ioReader = new InputStreamReader(fis, DEFAULT_CHARSET);
-      reader = new BufferedReader(ioReader);
-      int i = 0;
-      String line;
+      reader = new CSVReader(ioReader);
+      List<String> line;
 
-      while ((line = reader.readLine()) != null) {
+      while ((line = reader.readNext()) != null) {
 
-        i += 1;
-        
-        // skip first (header) line
-        if (i == 1) {
-          continue;
+        if (line.size() != 4) {
+          throw new TeamsFileException("Incorrect columns number in line #" + reader.getLineNumber() + " in the '" + file + "'.");
         }
 
-        List<String> splitted = StringUtils.split(line);
-
-        if (splitted.size() != 4) {
-          throw new TeamsFileException("Incorrect columns number in line #" + i + " in the '" + file + "'.");
-        }
-
-        String name = splitted.get(0);
-        String league = splitted.get(1);
-        String country = splitted.get(2);
-        Rank rank = parseRank(file, i, splitted.get(3));
+        String name = line.get(0);
+        String league = line.get(1);
+        String country = line.get(2);
+        Rank rank = parseRank(file, reader.getLineNumber(), line.get(3));
 
         Team team = new Team(name, rank, country, league);
 
