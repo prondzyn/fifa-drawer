@@ -36,7 +36,7 @@ public class Engine {
         participantsDrawn = true;
       }
       if (properties.shouldDrawTeams()) {
-        if (participantsDrawn) {
+        if (participantsDrawn && drawResult.length() > 0) {
           drawResult.append("\n\n");
         }
         drawResult.append(drawer.drawTeams(teams.get()));
