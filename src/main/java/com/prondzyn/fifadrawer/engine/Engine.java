@@ -28,14 +28,26 @@ public class Engine {
 
       TeamsHolder teams = new TeamsLoader(properties).load();
 
-      String drawResult = new FIFADrawer(participants.getNames(), teams.get()).draw();
+      FIFADrawer drawer = new FIFADrawer();
+      StringBuilder drawResult = new StringBuilder();
+      boolean participantsDrawn = false;
+      if (properties.shouldDrawParticipants()) {
+        drawResult.append(drawer.drawMatches(participants.getNames()));
+        participantsDrawn = true;
+      }
+      if (properties.shouldDrawTeams()) {
+        if (participantsDrawn) {
+          drawResult.append("\n\n");
+        }
+        drawResult.append(drawer.drawTeams(teams.get()));
+      }
 
       if (properties.printDrawResultToConsole()) {
         System.out.println(drawResult);
       }
 
       if (properties.sendDrawResultByEmail()) {
-        new MailSender(properties).send(drawResult, participants.getEmails());
+        new MailSender(properties).send(drawResult.toString(), participants.getEmails());
       }
 
     } catch (ApplicationException ex) {

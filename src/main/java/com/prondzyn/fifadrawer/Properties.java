@@ -37,7 +37,10 @@ public class Properties extends java.util.Properties {
 
   private static final String ADMIN_EMAIL = "admin.email";
 
+  private static final String DRAW_PARTICIPANTS = "draw.participants";
   private static final String PARTICIPANTS_FILE_PATH = "file.path.participants";
+
+  private static final String DRAW_TEAMS = "draw.teams";
   private static final String TEAMS_FILE_PATH = "file.path.teams";
 
   private static final String TEAMS_RANK_THRESHOLD = "teams.rank.threshold";
@@ -49,6 +52,8 @@ public class Properties extends java.util.Properties {
   private static final String TEAMS_NAMES_TO_SKIP = "teams.skipped.names";
 
   private static final Set<String> required;
+  private static final Set<String> requiredForParticipantsDraw;
+  private static final Set<String> requiredForTeamsDraw;
   private static final Set<String> requiredForEmail;
 
   static {
@@ -56,10 +61,16 @@ public class Properties extends java.util.Properties {
     required = new HashSet<>();
     required.add(PRINT_CONSOLE);
     required.add(PRINT_EMAIL);
-    required.add(PARTICIPANTS_FILE_PATH);
-    required.add(TEAMS_FILE_PATH);
-    required.add(TEAMS_RANK_THRESHOLD);
-    required.add(TEAMS_RANK_COMPARISION);
+    required.add(DRAW_PARTICIPANTS);
+    required.add(DRAW_TEAMS);
+
+    requiredForParticipantsDraw = new HashSet<>();
+    requiredForParticipantsDraw.add(PARTICIPANTS_FILE_PATH);
+
+    requiredForTeamsDraw = new HashSet<>();
+    requiredForTeamsDraw.add(TEAMS_FILE_PATH);
+    requiredForTeamsDraw.add(TEAMS_RANK_THRESHOLD);
+    requiredForTeamsDraw.add(TEAMS_RANK_COMPARISION);
 
     requiredForEmail = new HashSet<>();
     requiredForEmail.add(MailSMTP.HOST);
@@ -104,8 +115,16 @@ public class Properties extends java.util.Properties {
     return BooleanUtils.parse(getProperty(PRINT_EMAIL));
   }
 
+  public boolean shouldDrawParticipants() {
+    return BooleanUtils.parse(getProperty(DRAW_PARTICIPANTS));
+  }
+
   public File getParticipantsFile() {
     return new File(directory, getProperty(PARTICIPANTS_FILE_PATH));
+  }
+
+  public boolean shouldDrawTeams() {
+    return BooleanUtils.parse(getProperty(DRAW_TEAMS));
   }
 
   public File getTeamsFile() {
@@ -173,15 +192,31 @@ public class Properties extends java.util.Properties {
   }
 
   private void validate() {
+
     validateRequired(required);
+
     validatePrintDrawResultToConsole();
     validateSendDrawResultByEmail();
     validatePrinting();
+
     if (sendDrawResultByEmail()) {
       validateRequired(requiredForEmail);
     }
+
+    validateShouldDrawParticipants();
+    validateShouldDrawTeams();
+    validateDrawIndicators();
+
+    if (shouldDrawParticipants()) {
+      validateRequired(requiredForParticipantsDraw);
+    }
+    if (shouldDrawTeams()) {
+      validateRequired(requiredForTeamsDraw);
+    }
+
     validateParticipantsFile();
     validateTeamsFile();
+
     validateTeamsRankComparision();
     validateTeamsRankThreshold();
     validateTeamTypesToSkip();
@@ -215,6 +250,28 @@ public class Properties extends java.util.Properties {
   private void validatePrinting() {
     if (!printDrawResultToConsole() && !sendDrawResultByEmail()) {
       throw new ApplicationException("Both printing methods are disabled. Please enable at least one printing method in the application config file.");
+    }
+  }
+
+  private void validateShouldDrawParticipants() {
+    try {
+      shouldDrawParticipants();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DRAW_PARTICIPANTS));
+    }
+  }
+
+  private void validateShouldDrawTeams() {
+    try {
+      shouldDrawTeams();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DRAW_TEAMS));
+    }
+  }
+
+  private void validateDrawIndicators() {
+    if (!shouldDrawParticipants() && !shouldDrawTeams()) {
+      throw new ApplicationException("Both draw types are turned off. Please turn on at least one draw type in the application config file.");
     }
   }
 

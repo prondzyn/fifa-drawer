@@ -4,7 +4,6 @@ import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.utils.CollectionUtils;
-import com.prondzyn.fifadrawer.utils.CopyUtils;
 import com.prondzyn.fifadrawer.utils.RandomUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,28 +11,49 @@ import java.util.Map;
 
 public class FIFADrawer {
 
-  private final List<String> participants;
-  private final Map<TeamType, Map<Rank, List<Team>>> teams;
-  private final StringBuilder drawResult;
-
   private Pair incompletePair;
 
-  public FIFADrawer(List<String> participants, Map<TeamType, Map<Rank, List<Team>>> teams) {
-    this.participants = CopyUtils.copy(participants);
-    this.teams = teams;
-    this.drawResult = new StringBuilder();
+  public String drawMatches(List<String> participants) {
+    List<Pair> pairs = drawPairs(participants);
+    boolean firstMatch = (incompletePair != null);
+    List<String> matches = new ArrayList<>();
+    while (pairs.size() > 0) {
+      Pair first;
+      Pair second;
+      if (firstMatch) {
+        first = RandomUtils.getRandomItem(pairs);
+        if (first != incompletePair) {
+          continue;
+        }
+        pairs.remove(first);
+        second = RandomUtils.removeRandomItem(pairs);
+        firstMatch = false;
+      } else {
+        first = RandomUtils.removeRandomItem(pairs);
+        second = RandomUtils.removeRandomItem(pairs);
+      }
+      if (first != null && second != null) {
+        matches.add(first + " vs. " + second);
+      } else if (first != null) {
+        String secondParticipant = first.getSecond();
+        if (secondParticipant != null) {
+          matches.add(first.getFirst() + " vs. " + secondParticipant);
+        } else {
+          matches.add(first.getFirst());
+        }
+      }
+    }
+    StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < matches.size(); i++) {
+      builder.append(getMatchTime(i)).append(": ").append(matches.get(i));
+      if (i < matches.size() - 1) {
+        builder.append("\n");
+      }
+    }
+    return builder.toString();
   }
 
-  public String draw() {
-
-    drawMatches(drawPairs());
-
-    drawTeams();
-
-    return drawResult.toString();
-  }
-
-  private List<Pair> drawPairs() {
+  private List<Pair> drawPairs(List<String> participants) {
     List<Pair> pairs = new ArrayList<>();
     while (participants.size() > 0) {
       String first = RandomUtils.removeRandomItem(participants);
@@ -47,43 +67,6 @@ public class FIFADrawer {
     return pairs;
   }
 
-  private void drawMatches(List<Pair> teams) {
-    boolean firstMatch = (incompletePair != null);
-    List<String> matches = new ArrayList<>();
-    while (teams.size() > 0) {
-      Pair first;
-      Pair second;
-      if (firstMatch) {
-        first = RandomUtils.getRandomItem(teams);
-        if (first != incompletePair) {
-          continue;
-        }
-        teams.remove(first);
-        second = RandomUtils.removeRandomItem(teams);
-        firstMatch = false;
-      } else {
-        first = RandomUtils.removeRandomItem(teams);
-        second = RandomUtils.removeRandomItem(teams);
-      }
-      if (first != null && second != null) {
-        matches.add(first + " vs. " + second);
-      } else if (first != null) {
-        String secondParticipant = first.getSecond();
-        if (secondParticipant != null) {
-          matches.add(first.getFirst() + " vs. " + secondParticipant);
-        } else {
-          matches.add(first.getFirst());
-        }
-      }
-    }
-    for (int i = 0; i < matches.size(); i++) {
-      drawResult.append(getMatchTime(i)).append(": ").append(matches.get(i));
-      if (i < matches.size() - 1) {
-        drawResult.append("\n");
-      }
-    }
-  }
-
   private String getMatchTime(int i) {
     int startingHour = 10;
     String[] minutes = {"30", "45", "00", "15"};
@@ -94,7 +77,8 @@ public class FIFADrawer {
     return hour + ":" + minute;
   }
 
-  private void drawTeams() {
+  public String drawTeams(Map<TeamType, Map<Rank, List<Team>>> teams) {
+    StringBuilder builder = new StringBuilder();
     List<TeamType> availableTeamTypes = new ArrayList<>(teams.keySet());
     TeamType type = RandomUtils.getRandomItem(availableTeamTypes);
     Map<Rank, List<Team>> rankedTeams = teams.get(type);
@@ -105,11 +89,12 @@ public class FIFADrawer {
       if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
         Team home = (Team) RandomUtils.removeRandomItem(allowedTeams);
         Team visitor = (Team) RandomUtils.getRandomItem(allowedTeams);
-        drawResult.append("\n\nRank: ").append(home.getRank()).append("\n\n");
-        drawResult.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
-        drawResult.toString();
+        builder.append("Rank: ").append(home.getRank()).append("\n\n");
+        builder.append("1st TEAM: ").append(home).append("\n2nd TEAM: ").append(visitor);
+        builder.toString();
       }
     }
+    return builder.toString();
   }
 
   private class Pair {
