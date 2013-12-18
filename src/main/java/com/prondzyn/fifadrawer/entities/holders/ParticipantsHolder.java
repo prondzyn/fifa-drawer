@@ -19,9 +19,7 @@ public class ParticipantsHolder implements Serializable {
   public List<String> getNames() {
     List<String> usernames = new LinkedList<>();
     for (Participant p : participants) {
-      if (p.isActive()) {
-        usernames.add(p.getUsername());
-      }
+      usernames.add(p.getUsername());
     }
     return usernames;
   }
@@ -29,9 +27,7 @@ public class ParticipantsHolder implements Serializable {
   public Set<String> getEmails() {
     Set<String> emails = new LinkedHashSet<>();
     for (Participant p : participants) {
-      if (p.isActive()) {
-        emails.add(p.getEmail());
-      }
+      emails.add(p.getEmail());
     }
     return emails;
   }
@@ -39,7 +35,7 @@ public class ParticipantsHolder implements Serializable {
   public boolean isEmpty() {
     return participants.isEmpty();
   }
-  
+
   public int size() {
     return getNames().size();
   }

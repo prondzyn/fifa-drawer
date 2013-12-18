@@ -58,4 +58,17 @@ public abstract class StringUtils {
     String trimmed = trim(string);
     return trimmed.length() > 0 ? trimmed : null;
   }
+
+  public static String join(List<String> elementsToJoin, String connector) {
+    StringBuilder builder = new StringBuilder();
+    boolean firstAdded = false;
+    for (String element : elementsToJoin) {
+      if (firstAdded) {
+        builder.append(connector);
+      }
+      builder.append(element);
+      firstAdded = true;
+    }
+    return builder.toString();
+  }
 }

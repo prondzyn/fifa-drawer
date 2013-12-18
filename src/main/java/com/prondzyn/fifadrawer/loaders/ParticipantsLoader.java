@@ -21,8 +21,6 @@ import java.util.List;
 
 public class ParticipantsLoader {
 
-  private final static int MAX_PARTICIPANTS_NUMBER = 128;
-
   private final Properties properties;
 
   public ParticipantsLoader(Properties properties) {
@@ -55,7 +53,9 @@ public class ParticipantsLoader {
         boolean active = BooleanUtils.parse(line.get(1));
         String email = line.get(2);
 
-        loaded.add(new Participant(name, active, email));
+        if (active) {
+          loaded.add(new Participant(name, email));
+        }
 
       }
 
@@ -76,10 +76,7 @@ public class ParticipantsLoader {
 
   private void validate(ParticipantsHolder participants) {
     if (participants.isEmpty()) {
-      throw new ParticipantsFileException("Participants file is empty.");
-    }
-    if (participants.size() > MAX_PARTICIPANTS_NUMBER) {
-      throw new ParticipantsFileException("Too much active participants.");
+      throw new ParticipantsFileException("Not enough active participants in the participants file.");
     }
   }
 }

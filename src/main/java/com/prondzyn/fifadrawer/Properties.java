@@ -23,10 +23,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.mail.internet.InternetAddress;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 
 public class Properties extends java.util.Properties {
 
   public static final String DEFAULT_CHARSET = "utf-8";
+
+  private static final int PARTICIPANTS_PER_MATCH_MIN_COUNT = 2;
+  private static final int PARTICIPANTS_PER_MATCH_MAX_COUNT = 20;
 
   private static final String PRINT_CONSOLE = "print.console";
   private static final String PRINT_EMAIL = "print.email";
@@ -39,6 +44,12 @@ public class Properties extends java.util.Properties {
 
   private static final String DRAW_PARTICIPANTS = "draw.participants";
   private static final String PARTICIPANTS_FILE_PATH = "file.path.participants";
+
+  private static final String PARTICIPANTS_PER_MATCH_COUNT = "participants.per.match.count";
+
+  private static final String DISPLAY_TIME = "time.display";
+  private static final String MATCHES_START_TIME = "matches.start.time";
+  private static final String SINGLE_MATCH_DURATION = "single.match.duration";
 
   private static final String DRAW_TEAMS = "draw.teams";
   private static final String TEAMS_FILE_PATH = "file.path.teams";
@@ -53,6 +64,7 @@ public class Properties extends java.util.Properties {
 
   private static final Set<String> required;
   private static final Set<String> requiredForParticipantsDraw;
+  private static final Set<String> requiredForDisplayTime;
   private static final Set<String> requiredForTeamsDraw;
   private static final Set<String> requiredForEmail;
 
@@ -66,6 +78,12 @@ public class Properties extends java.util.Properties {
 
     requiredForParticipantsDraw = new HashSet<>();
     requiredForParticipantsDraw.add(PARTICIPANTS_FILE_PATH);
+    requiredForParticipantsDraw.add(PARTICIPANTS_PER_MATCH_COUNT);
+    requiredForParticipantsDraw.add(DISPLAY_TIME);
+
+    requiredForDisplayTime = new HashSet<>();
+    requiredForDisplayTime.add(MATCHES_START_TIME);
+    requiredForDisplayTime.add(SINGLE_MATCH_DURATION);
 
     requiredForTeamsDraw = new HashSet<>();
     requiredForTeamsDraw.add(TEAMS_FILE_PATH);
@@ -121,6 +139,22 @@ public class Properties extends java.util.Properties {
 
   public File getParticipantsFile() {
     return new File(directory, getProperty(PARTICIPANTS_FILE_PATH));
+  }
+
+  public int getParticipantsPerMatchCount() {
+    return Integer.parseInt(getProperty(PARTICIPANTS_PER_MATCH_COUNT));
+  }
+
+  public boolean shouldDisplayTime() {
+    return BooleanUtils.parse(getProperty(DISPLAY_TIME));
+  }
+
+  public DateTime getMatchesStartTime() {
+    return DateTime.parse(getProperty(MATCHES_START_TIME), DateTimeFormat.shortTime());
+  }
+
+  public int getSingleMatchDuration() {
+    return Integer.parseInt(getProperty(SINGLE_MATCH_DURATION));
   }
 
   public boolean shouldDrawTeams() {
@@ -217,6 +251,16 @@ public class Properties extends java.util.Properties {
     validateParticipantsFile();
     validateTeamsFile();
 
+    validateParticipantsPerMatchCount();
+
+    validateShouldDisplayTime();
+    if (shouldDisplayTime()) {
+      validateRequired(requiredForDisplayTime);
+    }
+
+    validateMatchesStartTime();
+    validateSingleMatchDuration();
+
     validateTeamsRankComparision();
     validateTeamsRankThreshold();
     validateTeamTypesToSkip();
@@ -289,6 +333,45 @@ public class Properties extends java.util.Properties {
     }
     if (!file.isFile()) {
       throw new InvalidPropertyException("Given file is not a regular file." + pleaseCheckTheProperty(key));
+    }
+  }
+
+  private void validateParticipantsPerMatchCount() {
+    try {
+      int count = getParticipantsPerMatchCount();
+      validateParticipantsPerMatchCountRange(count);
+    } catch (NumberFormatException ex) {
+      throw new ParseException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(PARTICIPANTS_PER_MATCH_COUNT));
+    }
+  }
+
+  private void validateParticipantsPerMatchCountRange(int count) {
+    if (PARTICIPANTS_PER_MATCH_MIN_COUNT > count || count > PARTICIPANTS_PER_MATCH_MAX_COUNT) {
+      throw new ParseException(String.format("The '%s' property is out of range. It must be between %d and %d.", PARTICIPANTS_PER_MATCH_COUNT, PARTICIPANTS_PER_MATCH_MIN_COUNT, PARTICIPANTS_PER_MATCH_MAX_COUNT));
+    }
+  }
+
+  private void validateShouldDisplayTime() {
+    try {
+      shouldDisplayTime();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DRAW_TEAMS));
+    }
+  }
+
+  private void validateMatchesStartTime() {
+    try {
+      getMatchesStartTime();
+    } catch (IllegalArgumentException ex) {
+      throw new ParseException("Invalid time format. HH:MM is a valid format." + pleaseCheckTheProperty(MATCHES_START_TIME));
+    }
+  }
+
+  private void validateSingleMatchDuration() {
+    try {
+      getSingleMatchDuration();
+    } catch (NumberFormatException ex) {
+      throw new ParseException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(SINGLE_MATCH_DURATION));
     }
   }
 

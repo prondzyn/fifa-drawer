@@ -1,14 +1,16 @@
 package com.prondzyn.fifadrawer.engine;
 
-import com.prondzyn.fifadrawer.engine.drawer.FIFADrawer;
 import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
 import com.prondzyn.fifadrawer.Properties;
+import com.prondzyn.fifadrawer.engine.drawer.Drawer;
 import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.mail.MailSender;
 import com.prondzyn.fifadrawer.loaders.ParticipantsLoader;
 import com.prondzyn.fifadrawer.loaders.PropertiesLoader;
 import com.prondzyn.fifadrawer.loaders.TeamsLoader;
+import com.prondzyn.fifadrawer.utils.StringUtils;
+import java.util.Set;
 
 public class Engine {
 
@@ -28,30 +30,44 @@ public class Engine {
 
       TeamsHolder teams = new TeamsLoader(properties).load();
 
-      FIFADrawer drawer = new FIFADrawer();
-      StringBuilder drawResult = new StringBuilder();
-      boolean participantsDrawn = false;
-      if (properties.shouldDrawParticipants()) {
-        drawResult.append(drawer.drawMatches(participants.getNames()));
-        participantsDrawn = true;
-      }
-      if (properties.shouldDrawTeams()) {
-        if (participantsDrawn && drawResult.length() > 0) {
-          drawResult.append("\n\n");
-        }
-        drawResult.append(drawer.drawTeams(teams.get()));
-      }
+      String drawn = draw(properties, participants, teams);
 
-      if (properties.printDrawResultToConsole()) {
-        System.out.println(drawResult);
-      }
+      printIfAllowed(properties, drawn);
 
-      if (properties.sendDrawResultByEmail()) {
-        new MailSender(properties).send(drawResult.toString(), participants.getEmails());
-      }
+      sendIfAllowed(properties, drawn, participants.getEmails());
 
     } catch (ApplicationException ex) {
       System.out.println("\nError: " + ex.getMessage());
+    }
+  }
+
+  private static String draw(Properties properties, ParticipantsHolder participants, TeamsHolder teams) {
+    Drawer drawer = new Drawer(properties);
+    StringBuilder result = new StringBuilder();
+    boolean participantsDrawn = false;
+    if (properties.shouldDrawParticipants()) {
+      result.append(drawer.drawMatches(participants.getNames()));
+      participantsDrawn = true;
+    }
+    if (properties.shouldDrawTeams()) {
+      if (participantsDrawn && result.length() > 0) {
+        result.append("\n");
+        result.append("\n");
+      }
+      result.append(drawer.drawTeams(teams.get()));
+    }
+    return result.toString();
+  }
+
+  private static void printIfAllowed(Properties properties, String drawResult) {
+    if (properties.printDrawResultToConsole() && StringUtils.isNotBlank(drawResult)) {
+      System.out.println(drawResult);
+    }
+  }
+
+  private static void sendIfAllowed(Properties properties, String drawResult, Set<String> emails) {
+    if (properties.sendDrawResultByEmail() && StringUtils.isNotBlank(drawResult)) {
+      new MailSender(properties).send(drawResult, emails);
     }
   }
 
