@@ -2,7 +2,6 @@ package com.prondzyn.fifadrawer.engine.drawer;
 
 import com.prondzyn.fifadrawer.Properties;
 import com.prondzyn.fifadrawer.entities.Rank;
-import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.entities.domain.Team;
 import com.prondzyn.fifadrawer.utils.CollectionUtils;
 import com.prondzyn.fifadrawer.utils.CopyUtils;
@@ -62,7 +61,7 @@ public class Drawer {
   }
 
   private boolean couldDoNotLeaveAnyoneAlone(List<List<String>> matches) {
-    return matches.size() > 1 && properties.getParticipantsPerMatchCount() > 2;
+    return CollectionUtils.hasMinSize(matches, 2) && properties.getParticipantsPerMatchCount() > 2;
   }
 
   private void doNotLeaveAnyoneAlone(List<List<String>> matches) {
@@ -121,24 +120,40 @@ public class Drawer {
     return matchTime.toString(DateTimeFormat.shortTime());
   }
 
-  public String drawTeams(Map<TeamType, Map<Rank, List<Team>>> teams) {
-    StringBuilder builder = new StringBuilder();
-    List<TeamType> availableTeamTypes = new ArrayList<>(teams.keySet());
-    TeamType type = RandomUtils.getRandomItem(availableTeamTypes);
-    Map<Rank, List<Team>> rankedTeams = teams.get(type);
-    if (rankedTeams != null) {
-      List<Rank> allowedRanks = new ArrayList<>(rankedTeams.keySet());
-      Rank rank = RandomUtils.getRandomItem(allowedRanks);
-      List<Team> allowedTeams = rankedTeams.get(rank);
-      if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
-        Team home = (Team) RandomUtils.removeRandomItem(allowedTeams);
-        Team visitor = (Team) RandomUtils.removeRandomItem(allowedTeams);
-        builder.append("Rank: ").append(home.getRank()).append("\n");
-        builder.append("\n");
-        builder.append("1st TEAM: ").append(home).append("\n");
-        builder.append("2nd TEAM: ").append(visitor);
-        builder.toString();
+  public String drawTeams(Map<Rank, List<Team>> teams) {
+    List<Rank> allowedRanks = new ArrayList<>(teams.keySet());
+    Rank rank = RandomUtils.getRandomItem(allowedRanks);
+    List<Team> allowedTeams = teams.get(rank);
+    if (CollectionUtils.hasMinSize(allowedTeams, 2)) {
+      Team home = drawHome(allowedTeams);
+      Team visitor = drawVisitor(allowedTeams, home);
+      return printTeamsDrawResult(home, visitor);
+    }
+    return null;
+  }
+
+  private Team drawHome(List<Team> allowedTeams) {
+    return RandomUtils.removeRandomItem(allowedTeams);
+  }
+
+  private Team drawVisitor(List<Team> allowedTeams, Team drawnHome) {
+    Team visitor;
+    do {
+      visitor = RandomUtils.removeRandomItem(allowedTeams);
+      if (properties.shouldAllowMixedMatches()) {
+        break;
       }
+    } while (visitor != null && drawnHome.getType() != visitor.getType());
+    return visitor;
+  }
+
+  private String printTeamsDrawResult(Team home, Team visitor) {
+    StringBuilder builder = new StringBuilder();
+    if (home != null && visitor != null) {
+      builder.append("Rank: ").append(home.getRank()).append("\n");
+      builder.append("\n");
+      builder.append("1st TEAM: ").append(home).append("\n");
+      builder.append("2nd TEAM: ").append(visitor);
     }
     return builder.toString();
   }

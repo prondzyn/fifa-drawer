@@ -45,14 +45,6 @@ public class Team implements Serializable {
     return StringUtils.areEqualIgnoreCase(NATIONAL_TEAM_INDICATOR, country) || StringUtils.areEqualIgnoreCase(NATIONAL_TEAM_INDICATOR, league);
   }
 
-  public boolean asPowerfulAs(Team team) {
-    return rank.equals(team.rank);
-  }
-
-  public boolean notAsPowerfulAs(Team team) {
-    return !asPowerfulAs(team);
-  }
-
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder(name);

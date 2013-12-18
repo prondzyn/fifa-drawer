@@ -37,7 +37,7 @@ public class Engine {
       sendIfAllowed(properties, drawn, participants.getEmails());
 
     } catch (ApplicationException ex) {
-      System.out.println("\nError: " + ex.getMessage());
+      System.out.println("Error: " + ex.getMessage());
     }
   }
 
@@ -46,15 +46,20 @@ public class Engine {
     StringBuilder result = new StringBuilder();
     boolean participantsDrawn = false;
     if (properties.shouldDrawParticipants()) {
-      result.append(drawer.drawMatches(participants.getNames()));
-      participantsDrawn = true;
+      String drawMatchesResult = drawer.drawMatches(participants.getNames());
+      if (StringUtils.isNotBlank(drawMatchesResult)) {
+        result.append(drawMatchesResult);
+        participantsDrawn = true;
+      }
     }
     if (properties.shouldDrawTeams()) {
-      if (participantsDrawn && result.length() > 0) {
-        result.append("\n");
-        result.append("\n");
+      String drawTeamsResult = drawer.drawTeams(teams.get());
+      if (StringUtils.isNotBlank(drawTeamsResult)) {
+        if (participantsDrawn) {
+          result.append("\n\n");
+        }
+        result.append(drawTeamsResult);
       }
-      result.append(drawer.drawTeams(teams.get()));
     }
     return result.toString();
   }

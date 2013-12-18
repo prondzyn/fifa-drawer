@@ -62,6 +62,8 @@ public class Properties extends java.util.Properties {
   private static final String TEAMS_LEAGUES_TO_SKIP = "teams.skipped.leagues";
   private static final String TEAMS_NAMES_TO_SKIP = "teams.skipped.names";
 
+  private static final String ALLOW_MIXED_MATCHES = "teams.allow.mixed.matches";
+
   private static final Set<String> required;
   private static final Set<String> requiredForParticipantsDraw;
   private static final Set<String> requiredForDisplayTime;
@@ -225,6 +227,11 @@ public class Properties extends java.util.Properties {
     return new HashSet<>(getArrayProperty(key));
   }
 
+  public boolean shouldAllowMixedMatches() {
+    String allow = getProperty(ALLOW_MIXED_MATCHES);
+    return StringUtils.isNotBlank(allow) ? BooleanUtils.parse(allow) : false;
+  }
+
   private void validate() {
 
     validateRequired(required);
@@ -263,7 +270,10 @@ public class Properties extends java.util.Properties {
 
     validateTeamsRankComparision();
     validateTeamsRankThreshold();
+
     validateTeamTypesToSkip();
+
+    validateShouldAllowMixedMatches();
   }
 
   private void validateRequired(Set<String> requiredProperties) {
@@ -396,6 +406,14 @@ public class Properties extends java.util.Properties {
       getTeamTypesToSkip();
     } catch (ParseException ex) {
       throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_TYPES_TO_SKIP));
+    }
+  }
+
+  private void validateShouldAllowMixedMatches() {
+    try {
+      shouldAllowMixedMatches();
+    } catch (ParseException ex) {
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(ALLOW_MIXED_MATCHES));
     }
   }
 
