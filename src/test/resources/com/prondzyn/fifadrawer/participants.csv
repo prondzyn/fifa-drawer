@@ -1,9 +1,9 @@
-USERNAME,IS ACTIVE INDICATOR,EMAIL ADDRESS
-Eddard,Y,example@example.com
-Jon,Y,example@example.com
-Arya,Y,example@example.com
-Robb,Y,example@example.com
-Catelyn,N,example@example.com
-Bran,yes,example@example.com
-Sansa,Y,example@example.com
-Rickon,Y,example@example.com
+USERNAME , IS ACTIVE INDICATOR , EMAIL ADDRESS
+Eddard   ,          Y          , example@example.com
+Jon      ,          Y          , example@example.com
+Arya     ,          Y          , example@example.com
+Robb     ,          Y          , example@example.com
+Catelyn  ,          Y          , example@example.com
+Bran     ,          Y          , example@example.com
+Sansa    ,          Y          , example@example.com
+Rickon   ,          Y          , example@example.com
