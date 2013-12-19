@@ -29,6 +29,7 @@ import org.joda.time.format.DateTimeFormat;
 public class Properties extends java.util.Properties {
 
   public static final String DEFAULT_CHARSET = "utf-8";
+  public static final String DEFAULT_TIME_FORMAT = "HH:mm";
 
   private static final int PARTICIPANTS_PER_MATCH_MIN_COUNT = 2;
   private static final int PARTICIPANTS_PER_MATCH_MAX_COUNT = 20;
@@ -152,7 +153,7 @@ public class Properties extends java.util.Properties {
   }
 
   public DateTime getMatchesStartTime() {
-    return DateTime.parse(getProperty(MATCHES_START_TIME), DateTimeFormat.shortTime());
+    return DateTime.parse(getProperty(MATCHES_START_TIME), DateTimeFormat.forPattern(DEFAULT_TIME_FORMAT));
   }
 
   public int getSingleMatchDuration() {
