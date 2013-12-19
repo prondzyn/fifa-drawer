@@ -10,6 +10,7 @@ import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
+import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.IOUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
 import java.io.File;
@@ -47,16 +48,17 @@ public class TeamsLoader {
 
       while ((line = reader.readNext()) != null) {
 
-        if (line.size() != 4) {
+        if (line.size() != 5) {
           throw new TeamsFileException("Incorrect columns number in line #" + reader.getLineNumber() + " in the '" + file + "'.");
         }
 
         String name = line.get(0);
         String league = line.get(1);
         String country = line.get(2);
-        Rank rank = parseRank(file, reader.getLineNumber(), line.get(3));
+        boolean isNationalTeam = BooleanUtils.parse(line.get(3));
+        Rank rank = parseRank(file, reader.getLineNumber(), line.get(4));
 
-        Team team = new Team(name, rank, country, league);
+        Team team = new Team(name, rank, country, league, isNationalTeam);
 
         if (validator.isValid(team)) {
           loaded.add(team);

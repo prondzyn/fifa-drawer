@@ -7,18 +7,18 @@ import java.io.Serializable;
 
 public class Team implements Serializable {
 
-  private static final String NATIONAL_TEAM_INDICATOR = "Reprezentacje";
-
   private final String name;
   private final Rank rank;
   private final String country;
   private final String league;
+  private final boolean nationalTeam;
 
-  public Team(String name, Rank rank, String country, String league) {
+  public Team(String name, Rank rank, String country, String league, boolean isNationalTeam) {
     this.name = name;
     this.rank = rank;
     this.country = country;
     this.league = league;
+    this.nationalTeam = isNationalTeam;
   }
 
   public String getName() {
@@ -38,17 +38,13 @@ public class Team implements Serializable {
   }
 
   public TeamType getType() {
-    return isNationalTeam() ? TeamType.NATIONAL : TeamType.CLUB;
-  }
-
-  private boolean isNationalTeam() {
-    return StringUtils.areEqualIgnoreCase(NATIONAL_TEAM_INDICATOR, country) || StringUtils.areEqualIgnoreCase(NATIONAL_TEAM_INDICATOR, league);
+    return nationalTeam ? TeamType.NATIONAL : TeamType.CLUB;
   }
 
   @Override
   public String toString() {
     StringBuilder builder = new StringBuilder(name);
-    if (!isNationalTeam()) {
+    if (!nationalTeam) {
       builder.append(" (");
       boolean countryExists = false;
       if (StringUtils.isNotBlank(country)) {
