@@ -249,31 +249,36 @@ public class Properties extends java.util.Properties {
     validateDrawIndicators();
 
     if (shouldDrawParticipants()) {
+
       validateRequired(requiredForParticipantsDraw);
+
+      validateParticipantsFile();
+
+      validateParticipantsPerMatchCount();
+
+      validateShouldDisplayTime();
+      if (shouldDisplayTime()) {
+
+        validateRequired(requiredForDisplayTime);
+
+        validateMatchesStartTime();
+        validateSingleMatchDuration();
+      }
     }
+
     if (shouldDrawTeams()) {
+
       validateRequired(requiredForTeamsDraw);
+
+      validateTeamsFile();
+
+      validateTeamsRankComparision();
+      validateTeamsRankThreshold();
+
+      validateTeamTypesToSkip();
+
+      validateShouldAllowMixedMatches();
     }
-
-    validateParticipantsFile();
-    validateTeamsFile();
-
-    validateParticipantsPerMatchCount();
-
-    validateShouldDisplayTime();
-    if (shouldDisplayTime()) {
-      validateRequired(requiredForDisplayTime);
-    }
-
-    validateMatchesStartTime();
-    validateSingleMatchDuration();
-
-    validateTeamsRankComparision();
-    validateTeamsRankThreshold();
-
-    validateTeamTypesToSkip();
-
-    validateShouldAllowMixedMatches();
   }
 
   private void validateRequired(Set<String> requiredProperties) {
@@ -365,7 +370,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDisplayTime();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DRAW_TEAMS));
+      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DISPLAY_TIME));
     }
   }
 
