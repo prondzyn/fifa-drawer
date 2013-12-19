@@ -1,5 +1,7 @@
 package com.prondzyn.fifadrawer.loaders;
 
-public class TeamsLoaderTest extends AbstractLoaderTest {
+import com.prondzyn.fifadrawer.loaders.properties.AbstractPropertiesLoaderTest;
+
+public class TeamsLoaderTest extends AbstractPropertiesLoaderTest {
 
 }

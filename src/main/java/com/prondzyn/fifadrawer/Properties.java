@@ -16,12 +16,13 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -73,27 +74,27 @@ public class Properties extends java.util.Properties {
 
   static {
 
-    required = new HashSet<>();
+    required = new LinkedHashSet<>();
     required.add(PRINT_CONSOLE);
     required.add(PRINT_EMAIL);
     required.add(DRAW_PARTICIPANTS);
     required.add(DRAW_TEAMS);
 
-    requiredForParticipantsDraw = new HashSet<>();
+    requiredForParticipantsDraw = new LinkedHashSet<>();
     requiredForParticipantsDraw.add(PARTICIPANTS_FILE_PATH);
     requiredForParticipantsDraw.add(PARTICIPANTS_PER_MATCH_COUNT);
     requiredForParticipantsDraw.add(DISPLAY_TIME);
 
-    requiredForDisplayTime = new HashSet<>();
+    requiredForDisplayTime = new LinkedHashSet<>();
     requiredForDisplayTime.add(MATCHES_START_TIME);
     requiredForDisplayTime.add(SINGLE_MATCH_DURATION);
 
-    requiredForTeamsDraw = new HashSet<>();
+    requiredForTeamsDraw = new LinkedHashSet<>();
     requiredForTeamsDraw.add(TEAMS_FILE_PATH);
     requiredForTeamsDraw.add(TEAMS_RANK_THRESHOLD);
     requiredForTeamsDraw.add(TEAMS_RANK_COMPARISION);
 
-    requiredForEmail = new HashSet<>();
+    requiredForEmail = new LinkedHashSet<>();
     requiredForEmail.add(MailSMTP.HOST);
     requiredForEmail.add(MailSMTP.PORT);
     requiredForEmail.add(MailSMTP.USERNAME);
@@ -204,7 +205,7 @@ public class Properties extends java.util.Properties {
   }
 
   public Set<TeamType> getTeamTypesToSkip() {
-    Set<TeamType> types = new HashSet<>();
+    Set<TeamType> types = new LinkedHashSet<>();
     Set<String> set = getSetProperty(TEAMS_TYPES_TO_SKIP);
     for (String string : set) {
       types.add(TeamType.parse(string));
@@ -225,7 +226,7 @@ public class Properties extends java.util.Properties {
   }
 
   private Set<String> getSetProperty(String key) {
-    return new HashSet<>(getArrayProperty(key));
+    return new LinkedHashSet<>(getArrayProperty(key));
   }
 
   public boolean shouldAllowMixedMatches() {
@@ -240,10 +241,6 @@ public class Properties extends java.util.Properties {
     validatePrintDrawResultToConsole();
     validateSendDrawResultByEmail();
     validatePrinting();
-
-    if (sendDrawResultByEmail()) {
-      validateRequired(requiredForEmail);
-    }
 
     validateShouldDrawParticipants();
     validateShouldDrawTeams();
@@ -280,6 +277,18 @@ public class Properties extends java.util.Properties {
 
       validateShouldAllowMixedMatches();
     }
+
+    if (sendDrawResultByEmail()) {
+      validateRequired(requiredForEmail);
+
+      validateEmailSubject();
+
+      validateMailSMTP();
+
+      validateSender();
+
+      validateAdminEmail();
+    }
   }
 
   private void validateRequired(Set<String> requiredProperties) {
@@ -295,7 +304,7 @@ public class Properties extends java.util.Properties {
     try {
       printDrawResultToConsole();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(PRINT_CONSOLE));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(PRINT_CONSOLE));
     }
   }
 
@@ -303,7 +312,7 @@ public class Properties extends java.util.Properties {
     try {
       sendDrawResultByEmail();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(PRINT_EMAIL));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(PRINT_EMAIL));
     }
   }
 
@@ -317,7 +326,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDrawParticipants();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DRAW_PARTICIPANTS));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(DRAW_PARTICIPANTS));
     }
   }
 
@@ -325,7 +334,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDrawTeams();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DRAW_TEAMS));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(DRAW_TEAMS));
     }
   }
 
@@ -357,7 +366,7 @@ public class Properties extends java.util.Properties {
       int count = getParticipantsPerMatchCount();
       validateParticipantsPerMatchCountRange(count);
     } catch (NumberFormatException ex) {
-      throw new ParseException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(PARTICIPANTS_PER_MATCH_COUNT));
+      throw new InvalidPropertyException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(PARTICIPANTS_PER_MATCH_COUNT));
     }
   }
 
@@ -371,7 +380,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDisplayTime();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(DISPLAY_TIME));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(DISPLAY_TIME));
     }
   }
 
@@ -379,20 +388,20 @@ public class Properties extends java.util.Properties {
     try {
       getMatchesStartTime();
     } catch (IllegalArgumentException ex) {
-      throw new ParseException("Invalid time format. HH:MM is a valid format." + pleaseCheckTheProperty(MATCHES_START_TIME));
+      throw new InvalidPropertyException("Invalid time format. HH:MM is a valid format." + pleaseCheckTheProperty(MATCHES_START_TIME));
     }
   }
 
   private void validateSingleMatchDuration() {
     try {
       int value = getSingleMatchDuration();
-      mustNotNegative(value);
+      mustBeNotNegative(value);
     } catch (NumberFormatException ex) {
-      throw new ParseException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(SINGLE_MATCH_DURATION));
+      throw new InvalidPropertyException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(SINGLE_MATCH_DURATION));
     }
   }
 
-  private void mustNotNegative(int value) {
+  private void mustBeNotNegative(int value) {
     if (value < 0) {
       throw new InvalidPropertyException(String.format("The '%s' property must not be negative.", SINGLE_MATCH_DURATION));
     }
@@ -402,7 +411,7 @@ public class Properties extends java.util.Properties {
     try {
       getTeamsRankComparision();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_COMPARISION));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_COMPARISION));
     }
   }
 
@@ -410,7 +419,7 @@ public class Properties extends java.util.Properties {
     try {
       getTeamsRankThreshold();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_THRESHOLD));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_THRESHOLD));
     }
   }
 
@@ -418,7 +427,7 @@ public class Properties extends java.util.Properties {
     try {
       getTeamTypesToSkip();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_TYPES_TO_SKIP));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_TYPES_TO_SKIP));
     }
   }
 
@@ -426,7 +435,38 @@ public class Properties extends java.util.Properties {
     try {
       shouldAllowMixedMatches();
     } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + pleaseCheckTheProperty(ALLOW_MIXED_MATCHES));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(ALLOW_MIXED_MATCHES));
+    }
+  }
+
+  private void validateMailSMTP() {
+    MailSMTP mailSMTP = new MailSMTP();
+  }
+
+  private void validateEmailSubject() {
+    String subject = getEmailSubject();
+    if (StringUtils.isBlank(subject)) {
+      throw new InvalidPropertyException("An email subject cannot be empty." + pleaseCheckTheProperty(MAIL_SUBJECT));
+    }
+  }
+
+  private void validateSender() {
+    try {
+      InternetAddress address = getSender();
+      if (address != null) {
+        address.validate();
+      }
+    } catch (AddressException ex) {
+      throw new InvalidPropertyException("Invalid email address." + pleaseCheckTheProperty(MAIL_SENDER_EMAIL));
+    }
+  }
+
+  private void validateAdminEmail() {
+    try {
+      String email = getAdminEmailAddress();
+      new InternetAddress(email).validate();
+    } catch (AddressException ex) {
+      throw new InvalidPropertyException("Invalid email address." + pleaseCheckTheProperty(ADMIN_EMAIL));
     }
   }
 
@@ -498,7 +538,8 @@ public class Properties extends java.util.Properties {
 
     private void validatePort() {
       try {
-        getPort();
+        int port = getPort();
+        mustBeNotNegative(port);
       } catch (NumberFormatException ex) {
         throw new InvalidPropertyException("Mail server port is invalid. Please check the '" + PORT + "' property in the application config file.");
       }
