@@ -14,10 +14,13 @@ import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.io.CSVReader;
 import com.prondzyn.fifadrawer.utils.IOUtils;
+import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 public class ParticipantsLoader {
 
@@ -50,8 +53,10 @@ public class ParticipantsLoader {
         }
 
         String name = line.get(0);
+        validateName(reader.getLineNumber(), name);
         boolean active = BooleanUtils.parse(line.get(1));
         String email = line.get(2);
+        validateEmail(reader.getLineNumber(), email);
 
         if (active) {
           loaded.add(new Participant(name, email));
@@ -72,6 +77,23 @@ public class ParticipantsLoader {
     validate(loaded);
 
     return loaded;
+  }
+
+  private void validateName(int lineNumber, String name) {
+    if (StringUtils.isBlank(name)) {
+      throw new ParticipantsFileException("Participant username cannot be blank. Line #" + lineNumber + ". Please check the participants file.");
+    }
+  }
+
+  private void validateEmail(int lineNumber, String email) {
+    if (StringUtils.isBlank(email)) {
+      throw new ParticipantsFileException("Participant email cannot be blank. Line #" + lineNumber + ". Please check the participants file.");
+    }
+    try {
+      new InternetAddress(email).validate();
+    } catch (AddressException ex) {
+      throw new ParticipantsFileException("Invalid email address '" + email + "' found in line #" + lineNumber + ". Please check the participants file.");
+    }
   }
 
   private void validate(ParticipantsHolder participants) {
