@@ -117,7 +117,7 @@ public class Drawer {
     DateTime startTime = properties.getMatchesStartTime();
     int duration = properties.getSingleMatchDuration();
     DateTime matchTime = startTime.plusMinutes(duration * currentMatchNumber);
-    return matchTime.toString(DateTimeFormat.shortTime());
+    return matchTime.toString(DateTimeFormat.forPattern(Properties.DEFAULT_TIME_FORMAT));
   }
 
   public String drawTeams(Map<Rank, List<Team>> teams) {

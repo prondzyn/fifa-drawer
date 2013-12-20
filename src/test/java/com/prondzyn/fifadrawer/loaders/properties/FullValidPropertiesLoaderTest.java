@@ -95,7 +95,7 @@ public class FullValidPropertiesLoaderTest extends AbstractPropertiesLoaderTest 
 
   @Test
   public void testMatchesStartTime() {
-    assertEquals(DateTime.parse("10:30", DateTimeFormat.forPattern("HH:mm")), properties.getMatchesStartTime());
+    assertEquals(DateTime.parse("10:30", DateTimeFormat.forPattern(Properties.DEFAULT_TIME_FORMAT)), properties.getMatchesStartTime());
   }
 
   @Test
