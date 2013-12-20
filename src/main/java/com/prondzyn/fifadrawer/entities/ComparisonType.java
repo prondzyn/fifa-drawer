@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public enum ComparisionType {
+public enum ComparisonType {
 
   EQ("eq", "==", "="),
   LT("lt", "<"),
@@ -16,23 +16,23 @@ public enum ComparisionType {
 
   private final List<String> codes;
 
-  private ComparisionType(String... codes) {
+  private ComparisonType(String... codes) {
     this.codes = Arrays.asList(codes);
   }
 
-  public static ComparisionType parse(String value) {
+  public static ComparisonType parse(String value) {
     String lower = StringUtils.lower(value);
-    for (ComparisionType type : values()) {
+    for (ComparisonType type : values()) {
       if (type.codes.contains(lower)) {
         return type;
       }
     }
-    throw new ParseException("Unknown comparision type '" + value + "' found. Allowed values: " + allowedValues() + ".");
+    throw new ParseException("Unknown comparison type '" + value + "' found. Allowed values: " + allowedValues() + ".");
   }
 
   private static List<String> allowedValues() {
     List<String> allowed = new ArrayList<>();
-    for (ComparisionType type : values()) {
+    for (ComparisonType type : values()) {
       allowed.add(type.name());
     }
     return allowed;

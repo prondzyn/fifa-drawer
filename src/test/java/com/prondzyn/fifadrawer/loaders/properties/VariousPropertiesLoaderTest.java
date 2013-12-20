@@ -128,8 +128,8 @@ public class VariousPropertiesLoaderTest extends AbstractPropertiesLoaderTest {
   }
 
   @Test(expected = InvalidPropertyException.class)
-  public void testInvalidRankComparisionForTeamsDraw() {
-    String filepath = getFilepath("invalid-rank-comparision-for-teams-draw.cfg");
+  public void testInvalidRankComparisonForTeamsDraw() {
+    String filepath = getFilepath("invalid-rank-comparison-for-teams-draw.cfg");
     PropertiesLoader.loadFrom(filepath);
   }
 

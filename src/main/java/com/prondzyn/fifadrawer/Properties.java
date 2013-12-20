@@ -2,7 +2,7 @@ package com.prondzyn.fifadrawer;
 
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.TeamType;
-import com.prondzyn.fifadrawer.entities.ComparisionType;
+import com.prondzyn.fifadrawer.entities.ComparisonType;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.InvalidPropertyException;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
@@ -57,7 +57,7 @@ public class Properties extends java.util.Properties {
   private static final String TEAMS_FILE_PATH = "file.path.teams";
 
   private static final String TEAMS_RANK_THRESHOLD = "teams.rank.threshold";
-  private static final String TEAMS_RANK_COMPARISION = "teams.rank.comparison";
+  private static final String TEAMS_RANK_COMPARISON = "teams.rank.comparison";
 
   private static final String TEAMS_TYPES_TO_SKIP = "teams.skipped.types";
   private static final String TEAMS_COUNTRIES_TO_SKIP = "teams.skipped.countries";
@@ -92,7 +92,7 @@ public class Properties extends java.util.Properties {
     requiredForTeamsDraw = new LinkedHashSet<>();
     requiredForTeamsDraw.add(TEAMS_FILE_PATH);
     requiredForTeamsDraw.add(TEAMS_RANK_THRESHOLD);
-    requiredForTeamsDraw.add(TEAMS_RANK_COMPARISION);
+    requiredForTeamsDraw.add(TEAMS_RANK_COMPARISON);
 
     requiredForEmail = new LinkedHashSet<>();
     requiredForEmail.add(MailSMTP.HOST);
@@ -199,9 +199,9 @@ public class Properties extends java.util.Properties {
     return Rank.parse(getProperty(TEAMS_RANK_THRESHOLD));
   }
 
-  public ComparisionType getTeamsRankComparision() {
-    String value = getProperty(TEAMS_RANK_COMPARISION);
-    return ComparisionType.parse(value);
+  public ComparisonType getTeamsRankComparison() {
+    String value = getProperty(TEAMS_RANK_COMPARISON);
+    return ComparisonType.parse(value);
   }
 
   public Set<TeamType> getTeamTypesToSkip() {
@@ -270,7 +270,7 @@ public class Properties extends java.util.Properties {
 
       validateTeamsFile();
 
-      validateTeamsRankComparision();
+      validateTeamsRankComparison();
       validateTeamsRankThreshold();
 
       validateTeamTypesToSkip();
@@ -407,11 +407,11 @@ public class Properties extends java.util.Properties {
     }
   }
 
-  private void validateTeamsRankComparision() {
+  private void validateTeamsRankComparison() {
     try {
-      getTeamsRankComparision();
+      getTeamsRankComparison();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_COMPARISION));
+      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_COMPARISON));
     }
   }
 

@@ -2,7 +2,7 @@ package com.prondzyn.fifadrawer.loaders.properties;
 
 import static org.junit.Assert.*;
 import com.prondzyn.fifadrawer.Properties;
-import com.prondzyn.fifadrawer.entities.ComparisionType;
+import com.prondzyn.fifadrawer.entities.ComparisonType;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.loaders.PropertiesLoader;
@@ -105,7 +105,7 @@ public class FullValidPropertiesLoaderTest extends AbstractPropertiesLoaderTest 
 
   @Test
   public void testTeamsRankComparison() {
-    assertEquals(ComparisionType.EQ, properties.getTeamsRankComparision());
+    assertEquals(ComparisonType.EQ, properties.getTeamsRankComparison());
   }
 
   @Test

@@ -1,6 +1,6 @@
 package com.prondzyn.fifadrawer.validators;
 
-import com.prondzyn.fifadrawer.entities.ComparisionType;
+import com.prondzyn.fifadrawer.entities.ComparisonType;
 import com.prondzyn.fifadrawer.Properties;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.entities.domain.Team;
@@ -25,8 +25,8 @@ public class TeamValidator {
 
   private boolean isValidRank(Rank rank) {
     Rank threshold = properties.getTeamsRankThreshold();
-    ComparisionType comparision = properties.getTeamsRankComparision();
-    switch (comparision) {
+    ComparisonType comparison = properties.getTeamsRankComparison();
+    switch (comparison) {
       case EQ:
         return rank.equalsTo(threshold);
       case GT:

@@ -31,6 +31,15 @@ public class TeamsHolder implements Serializable {
   }
 
   public boolean isEmpty() {
-    return get().isEmpty();
+    return size() == 0;
+  }
+
+  public int size() {
+    int size = 0;
+    for (Rank rank : buffer.keySet()) {
+      List<Team> list = buffer.get(rank);
+      size += list.size();
+    }
+    return size;
   }
 }
