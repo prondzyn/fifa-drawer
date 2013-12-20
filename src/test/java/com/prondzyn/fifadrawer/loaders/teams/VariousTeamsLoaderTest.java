@@ -129,4 +129,15 @@ public class VariousTeamsLoaderTest extends AbstractTeamsLoaderTest {
     String[] actuals = new String[]{teams.get(Rank.FIVE).get(0).getName(), teams.get(Rank.FIVE).get(1).getName()};
     assertArrayEquals(expecteds, actuals);
   }
+
+  @Test
+  public void testEmptyLinesAreNotAProblem() {
+    String filepath = getFilepath("rest-of-the-world-with-empty-lines.csv");
+    properties.setProperty("file.path.teams", filepath);
+    properties.setProperty("teams.rank.comparison", "GE");
+    properties.setProperty("teams.rank.threshold", "0.5");
+    TeamsLoader loader = new TeamsLoader(properties);
+    TeamsHolder holder = loader.load();
+    assertEquals(12, holder.size());
+  }
 }

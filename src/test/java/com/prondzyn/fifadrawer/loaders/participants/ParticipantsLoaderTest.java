@@ -6,6 +6,7 @@ import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.loaders.ParticipantsLoader;
+import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -107,5 +108,27 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
     loader.load();
+  }
+
+  @Test
+  public void testEmptyLinesAreNotAProblem() {
+    String filepath = getFilepath("valid-with-blank-lines.csv");
+    properties.setProperty("file.path.participants", filepath);
+    ParticipantsLoader loader = new ParticipantsLoader(properties);
+    ParticipantsHolder holder = loader.load();
+    assertEquals(25, holder.size());
+  }
+
+  @Test
+  public void testLoadingConcreteParticipants() {
+    String filepath = getFilepath("three-active-participants.csv");
+    properties.setProperty("file.path.participants", filepath);
+    ParticipantsLoader loader = new ParticipantsLoader(properties);
+    ParticipantsHolder holder = loader.load();
+    List<String> usernames = holder.getNames();
+    assertEquals(3, holder.size());
+    String[] expecteds = new String[]{"Beata", "Jakub", "Lidia"};
+    String[] actuals = usernames.toArray(new String[usernames.size()]);
+    assertArrayEquals(expecteds, actuals);
   }
 }

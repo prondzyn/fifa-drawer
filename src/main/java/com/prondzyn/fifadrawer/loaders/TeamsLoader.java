@@ -8,11 +8,10 @@ import com.prondzyn.fifadrawer.entities.holders.TeamsHolder;
 import com.prondzyn.fifadrawer.io.CSVReader;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
-import com.prondzyn.fifadrawer.lang.ParseException;
-import com.prondzyn.fifadrawer.lang.TeamsFileException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.IOUtils;
 import com.prondzyn.fifadrawer.validators.TeamValidator;
+import com.prondzyn.fifadrawer.validators.TeamsFileLineValidator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -48,15 +47,13 @@ public class TeamsLoader {
 
       while ((line = reader.readNext()) != null) {
 
-        if (line.size() != 5) {
-          throw new TeamsFileException("Incorrect columns number in line #" + reader.getLineNumber() + " in the '" + file + "'.");
-        }
+        TeamsFileLineValidator.validate(line, reader.getLineNumber());
 
         String name = line.get(0);
         String league = line.get(1);
         String country = line.get(2);
         boolean isNationalTeam = BooleanUtils.parse(line.get(3));
-        Rank rank = parseRank(file, reader.getLineNumber(), line.get(4));
+        Rank rank = Rank.parse(line.get(4));
 
         Team team = new Team(name, rank, country, league, isNationalTeam);
 
@@ -75,13 +72,5 @@ public class TeamsLoader {
       IOUtils.closeQuietly(reader);
     }
     return loaded;
-  }
-
-  private Rank parseRank(File file, int lineNumber, String value) {
-    try {
-      return Rank.parse(value);
-    } catch (ParseException ex) {
-      throw new ParseException(ex.getMessage() + " Please check line #" + lineNumber + " in the '" + file + "'.");
-    }
   }
 }
