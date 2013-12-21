@@ -3,7 +3,6 @@ package com.prondzyn.fifadrawer.loaders.participants;
 import com.prondzyn.fifadrawer.Properties;
 import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
-import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.loaders.ParticipantsLoader;
 import java.util.List;
@@ -78,7 +77,7 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     loader.load();
   }
 
-  @Test(expected = ParseException.class)
+  @Test(expected = ParticipantsFileException.class)
   public void testLoadingFileContainingBlankActiveIndicator() {
     String filepath = getFilepath("blank-active-indicator.csv");
     properties.setProperty("file.path.participants", filepath);
@@ -94,7 +93,7 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     loader.load();
   }
 
-  @Test(expected = ParseException.class)
+  @Test(expected = ParticipantsFileException.class)
   public void testLoadingFileContainingInvalidActiveIndicator() {
     String filepath = getFilepath("invalid-active-indicator.csv");
     properties.setProperty("file.path.participants", filepath);

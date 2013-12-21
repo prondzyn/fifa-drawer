@@ -10,7 +10,7 @@ import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.IOUtils;
-import com.prondzyn.fifadrawer.validators.TeamValidator;
+import com.prondzyn.fifadrawer.loaders.filters.TeamsFilter;
 import com.prondzyn.fifadrawer.validators.TeamsFileLineValidator;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,11 +23,13 @@ import java.util.List;
 public class TeamsLoader {
 
   private final Properties properties;
-  private final TeamValidator validator;
+  private final TeamsFilter filter;
+  private final TeamsFileLineValidator validator;
 
   public TeamsLoader(Properties properties) {
     this.properties = properties;
-    this.validator = new TeamValidator(properties);
+    this.filter = new TeamsFilter(properties);
+    this.validator = new TeamsFileLineValidator();
   }
 
   public TeamsHolder load() {
@@ -47,7 +49,7 @@ public class TeamsLoader {
 
       while ((line = reader.readNext()) != null) {
 
-        TeamsFileLineValidator.validate(line, reader.getLineNumber());
+        validator.validate(line, reader.getLineNumber());
 
         String name = line.get(0);
         String league = line.get(1);
@@ -57,7 +59,7 @@ public class TeamsLoader {
 
         Team team = new Team(name, rank, country, league, isNationalTeam);
 
-        if (validator.isValid(team)) {
+        if (filter.isAcceptable(team)) {
           loaded.add(team);
         }
       }

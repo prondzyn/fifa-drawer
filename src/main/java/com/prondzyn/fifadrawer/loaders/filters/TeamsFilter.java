@@ -1,4 +1,4 @@
-package com.prondzyn.fifadrawer.validators;
+package com.prondzyn.fifadrawer.loaders.filters;
 
 import com.prondzyn.fifadrawer.entities.ComparisonType;
 import com.prondzyn.fifadrawer.Properties;
@@ -8,22 +8,22 @@ import com.prondzyn.fifadrawer.entities.TeamType;
 import com.prondzyn.fifadrawer.lang.ApplicationException;
 import com.prondzyn.fifadrawer.utils.CollectionUtils;
 
-public class TeamValidator {
+public class TeamsFilter {
 
   private final Properties properties;
 
-  public TeamValidator(Properties properties) {
+  public TeamsFilter(Properties properties) {
     this.properties = properties;
   }
 
-  public boolean isValid(Team team) {
+  public boolean isAcceptable(Team team) {
     if (team == null) {
       throw new IllegalArgumentException("Team cannot be null.");
     }
-    return isValidRank(team.getRank()) && isValidType(team.getType()) && isValidCountry(team.getCountry()) && isValidLeague(team.getLeague()) && isValidName(team.getName());
+    return isAcceptableRank(team.getRank()) && isAcceptableType(team.getType()) && isAcceptableCountry(team.getCountry()) && isAcceptableLeague(team.getLeague()) && isAcceptableName(team.getName());
   }
 
-  private boolean isValidRank(Rank rank) {
+  private boolean isAcceptableRank(Rank rank) {
     Rank threshold = properties.getTeamsRankThreshold();
     ComparisonType comparison = properties.getTeamsRankComparison();
     switch (comparison) {
@@ -42,19 +42,19 @@ public class TeamValidator {
     }
   }
 
-  private boolean isValidType(TeamType type) {
+  private boolean isAcceptableType(TeamType type) {
     return CollectionUtils.notContains(properties.getTeamTypesToSkip(), type);
   }
 
-  private boolean isValidCountry(String country) {
+  private boolean isAcceptableCountry(String country) {
     return CollectionUtils.notContains(properties.getCountriesToSkip(), country);
   }
 
-  private boolean isValidLeague(String league) {
+  private boolean isAcceptableLeague(String league) {
     return CollectionUtils.notContains(properties.getLeaguesToSkip(), league);
   }
 
-  private boolean isValidName(String name) {
+  private boolean isAcceptableName(String name) {
     return CollectionUtils.notContains(properties.getNamesToSkip(), name);
   }
 }

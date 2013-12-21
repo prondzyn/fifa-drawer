@@ -6,10 +6,12 @@ public class Participant implements Serializable {
 
   private final String username;
   private final String email;
+  private final boolean active;
 
-  public Participant(String username, String email) {
+  public Participant(String username, String email, boolean isActive) {
     this.username = username;
     this.email = email;
+    this.active = isActive;
   }
 
   public String getUsername() {
@@ -19,4 +21,9 @@ public class Participant implements Serializable {
   public String getEmail() {
     return email;
   }
+
+  public boolean isActive() {
+    return active;
+  }
+
 }

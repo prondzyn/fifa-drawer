@@ -3,13 +3,12 @@ package com.prondzyn.fifadrawer.validators;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
-import com.prondzyn.fifadrawer.utils.BooleanUtils;
-import com.prondzyn.fifadrawer.utils.StringUtils;
 import java.util.List;
 
-public abstract class TeamsFileLineValidator {
+public class TeamsFileLineValidator extends AbstractFileLineValidator {
 
-  public static void validate(List<String> line, int lineNumber) {
+  @Override
+  public void validate(List<String> line, int lineNumber) {
 
     if (line.size() != 5) {
       throw new TeamsFileException(errorMessage(lineNumber, "Incorrect columns number."));
@@ -33,21 +32,7 @@ public abstract class TeamsFileLineValidator {
     tryToParseRank(lineNumber, rawRank);
   }
 
-  private static void required(int lineNumber, String columnName, String value) {
-    if (StringUtils.isBlank(value)) {
-      throw new TeamsFileException(errorMessage(lineNumber, String.format("%s cannot be blank.", columnName)));
-    }
-  }
-
-  private static void tryToParseBoolean(int lineNumber, String value) {
-    try {
-      BooleanUtils.parse(value);
-    } catch (ParseException ex) {
-      throw new TeamsFileException(errorMessage(lineNumber, ex.getMessage()));
-    }
-  }
-
-  private static void tryToParseRank(int lineNumber, String value) {
+  private void tryToParseRank(int lineNumber, String value) {
     try {
       Rank.parse(value);
     } catch (ParseException ex) {
@@ -55,7 +40,18 @@ public abstract class TeamsFileLineValidator {
     }
   }
 
-  private static String errorMessage(int lineNumber, String prefix) {
+  @Override
+  protected String errorMessage(int lineNumber, String prefix) {
     return String.format("%s Line #%s. Please check the teams file.", prefix, lineNumber);
+  }
+
+  @Override
+  protected void requiredInternal(String message) {
+    throw new TeamsFileException(message);
+  }
+
+  @Override
+  protected void tryToParseBooleanInternal(String message) {
+    throw new TeamsFileException(message);
   }
 }
