@@ -75,7 +75,8 @@ public class VariousPropertiesLoaderTest extends AbstractPropertiesLoaderTest {
   public void testInvalidParticipantsFilePathForParticipantsDraw() {
     // expect
     exception.expect(InvalidPropertyException.class);
-    exception.expectMessage("File 'C:\\workspaces\\github\\fifa-drawer\\build\\resources\\test\\com\\prondzyn\\fifadrawer\\loaders\\properties\\..\\there\\is\\no\\such\\path.csv' not found. Please check the 'file.path.participants' property in the application config file.");
+    exception.expectMessage("File ");
+    exception.expectMessage(" not found. Please check the 'file.path.participants' property in the application config file.");
     // test
     String filepath = getFilepath("invalid-participants-file-path-for-participants-draw.cfg");
     PropertiesLoader.loadFrom(filepath);
@@ -112,7 +113,7 @@ public class VariousPropertiesLoaderTest extends AbstractPropertiesLoaderTest {
   public void testInvalidSingleMatchDurationValueForParticipantsDraw() {
     // expect
     exception.expect(InvalidPropertyException.class);
-    exception.expectMessage("The 'single.match.duration' property must not be negative.");
+    exception.expectMessage("The 'single.match.duration' property must not be negative. Please check the application config file.");
     // test
     String filepath = getFilepath("invalid-single-match-duration-value-for-participants-draw.cfg");
     PropertiesLoader.loadFrom(filepath);
@@ -139,7 +140,7 @@ public class VariousPropertiesLoaderTest extends AbstractPropertiesLoaderTest {
   public void testInvalidMailSmtpPortForSendingDrawResultByEmail() {
     // expect
     exception.expect(InvalidPropertyException.class);
-    exception.expectMessage("The 'single.match.duration' property must not be negative.");
+    exception.expectMessage("The 'single.match.duration' property must not be negative. Please check the application config file.");
     // test
     String filepath = getFilepath("invalid-mail-smtp-port-for-sending-draw-result-by-email.cfg");
     PropertiesLoader.loadFrom(filepath);
@@ -169,7 +170,7 @@ public class VariousPropertiesLoaderTest extends AbstractPropertiesLoaderTest {
   public void testInvalidParticipantsPerMatchCountForParticipantsDraw() {
     // expect
     exception.expect(InvalidPropertyException.class);
-    exception.expectMessage("The 'participants.per.match.count' property is out of range. It must be between 2 and 20.");
+    exception.expectMessage("The 'participants.per.match.count' property is out of range. It must be between 2 and 20. Please check the application config file.");
     // test
     String filepath = getFilepath("invalid-participants-per-match-count-for-participants-draw.cfg");
     PropertiesLoader.loadFrom(filepath);
@@ -186,7 +187,8 @@ public class VariousPropertiesLoaderTest extends AbstractPropertiesLoaderTest {
   public void testInvalidTeamsFilePathForTeamsDraw() {
     // expect
     exception.expect(InvalidPropertyException.class);
-    exception.expectMessage("File 'C:\\workspaces\\github\\fifa-drawer\\build\\resources\\test\\com\\prondzyn\\fifadrawer\\loaders\\properties\\..\\path\\not\\exists.csv' not found. Please check the 'file.path.teams' property in the application config file.");
+    exception.expectMessage("File ");
+    exception.expectMessage(" not found. Please check the 'file.path.teams' property in the application config file.");
     // test
     String filepath = getFilepath("invalid-teams-file-path-for-teams-draw.cfg");
     PropertiesLoader.loadFrom(filepath);

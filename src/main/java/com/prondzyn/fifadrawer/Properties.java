@@ -372,7 +372,7 @@ public class Properties extends java.util.Properties {
 
   private void validateParticipantsPerMatchCountRange(int count) {
     if (PARTICIPANTS_PER_MATCH_MIN_COUNT > count || count > PARTICIPANTS_PER_MATCH_MAX_COUNT) {
-      throw new InvalidPropertyException(String.format("The '%s' property is out of range. It must be between %d and %d.", PARTICIPANTS_PER_MATCH_COUNT, PARTICIPANTS_PER_MATCH_MIN_COUNT, PARTICIPANTS_PER_MATCH_MAX_COUNT));
+      throw new InvalidPropertyException(String.format("The '%s' property is out of range. It must be between %d and %d. Please check the application config file.", PARTICIPANTS_PER_MATCH_COUNT, PARTICIPANTS_PER_MATCH_MIN_COUNT, PARTICIPANTS_PER_MATCH_MAX_COUNT));
     }
   }
 
@@ -403,7 +403,7 @@ public class Properties extends java.util.Properties {
 
   private void mustBeNotNegative(int value) {
     if (value < 0) {
-      throw new InvalidPropertyException(String.format("The '%s' property must not be negative.", SINGLE_MATCH_DURATION));
+      throw new InvalidPropertyException(String.format("The '%s' property must not be negative. Please check the application config file.", SINGLE_MATCH_DURATION));
     }
   }
 
