@@ -281,9 +281,9 @@ public class Properties extends java.util.Properties {
     if (sendDrawResultByEmail()) {
       validateRequired(requiredForEmail);
 
-      validateEmailSubject();
-
       validateMailSMTP();
+
+      validateEmailSubject();
 
       validateSender();
 
@@ -304,7 +304,7 @@ public class Properties extends java.util.Properties {
     try {
       printDrawResultToConsole();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(PRINT_CONSOLE));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(PRINT_CONSOLE, ex.getMessage()));
     }
   }
 
@@ -312,7 +312,7 @@ public class Properties extends java.util.Properties {
     try {
       sendDrawResultByEmail();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(PRINT_EMAIL));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(PRINT_EMAIL, ex.getMessage()));
     }
   }
 
@@ -326,7 +326,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDrawParticipants();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(DRAW_PARTICIPANTS));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(DRAW_PARTICIPANTS, ex.getMessage()));
     }
   }
 
@@ -334,7 +334,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDrawTeams();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(DRAW_TEAMS));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(DRAW_TEAMS, ex.getMessage()));
     }
   }
 
@@ -348,16 +348,12 @@ public class Properties extends java.util.Properties {
     validateFile(getParticipantsFile(), PARTICIPANTS_FILE_PATH);
   }
 
-  private void validateTeamsFile() {
-    validateFile(getTeamsFile(), TEAMS_FILE_PATH);
-  }
-
   private void validateFile(File file, String key) {
     if (!file.exists()) {
-      throw new InvalidPropertyException("File '" + file + "' not found." + pleaseCheckTheProperty(key));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(key, "File '" + file + "' not found."));
     }
     if (!file.isFile()) {
-      throw new InvalidPropertyException("Given file is not a regular file." + pleaseCheckTheProperty(key));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(key, "Given file is not a regular file."));
     }
   }
 
@@ -366,7 +362,7 @@ public class Properties extends java.util.Properties {
       int count = getParticipantsPerMatchCount();
       validateParticipantsPerMatchCountRange(count);
     } catch (NumberFormatException ex) {
-      throw new InvalidPropertyException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(PARTICIPANTS_PER_MATCH_COUNT));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(PARTICIPANTS_PER_MATCH_COUNT, "Invalid value. It must be an integer number."));
     }
   }
 
@@ -380,7 +376,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldDisplayTime();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(DISPLAY_TIME));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(DISPLAY_TIME, ex.getMessage()));
     }
   }
 
@@ -388,7 +384,7 @@ public class Properties extends java.util.Properties {
     try {
       getMatchesStartTime();
     } catch (IllegalArgumentException ex) {
-      throw new InvalidPropertyException("Invalid time format. HH:MM is a valid format." + pleaseCheckTheProperty(MATCHES_START_TIME));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(MATCHES_START_TIME, "Invalid time format. HH:MM is a valid format."));
     }
   }
 
@@ -397,7 +393,7 @@ public class Properties extends java.util.Properties {
       int value = getSingleMatchDuration();
       mustBeNotNegative(value);
     } catch (NumberFormatException ex) {
-      throw new InvalidPropertyException("Invalid value. It must be an integer number." + pleaseCheckTheProperty(SINGLE_MATCH_DURATION));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(SINGLE_MATCH_DURATION, "Invalid value. It must be an integer number."));
     }
   }
 
@@ -407,11 +403,15 @@ public class Properties extends java.util.Properties {
     }
   }
 
+  private void validateTeamsFile() {
+    validateFile(getTeamsFile(), TEAMS_FILE_PATH);
+  }
+
   private void validateTeamsRankComparison() {
     try {
       getTeamsRankComparison();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_COMPARISON));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(TEAMS_RANK_COMPARISON, ex.getMessage()));
     }
   }
 
@@ -419,7 +419,7 @@ public class Properties extends java.util.Properties {
     try {
       getTeamsRankThreshold();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_RANK_THRESHOLD));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(TEAMS_RANK_THRESHOLD, ex.getMessage()));
     }
   }
 
@@ -427,7 +427,7 @@ public class Properties extends java.util.Properties {
     try {
       getTeamTypesToSkip();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(TEAMS_TYPES_TO_SKIP));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(TEAMS_TYPES_TO_SKIP, ex.getMessage()));
     }
   }
 
@@ -435,7 +435,7 @@ public class Properties extends java.util.Properties {
     try {
       shouldAllowMixedMatches();
     } catch (ParseException ex) {
-      throw new InvalidPropertyException(ex.getMessage() + pleaseCheckTheProperty(ALLOW_MIXED_MATCHES));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(ALLOW_MIXED_MATCHES, ex.getMessage()));
     }
   }
 
@@ -446,7 +446,7 @@ public class Properties extends java.util.Properties {
   private void validateEmailSubject() {
     String subject = getEmailSubject();
     if (StringUtils.isBlank(subject)) {
-      throw new InvalidPropertyException("An email subject cannot be empty." + pleaseCheckTheProperty(MAIL_SUBJECT));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(MAIL_SUBJECT, "An email subject cannot be empty."));
     }
   }
 
@@ -457,7 +457,7 @@ public class Properties extends java.util.Properties {
         address.validate();
       }
     } catch (AddressException ex) {
-      throw new InvalidPropertyException("Invalid email address." + pleaseCheckTheProperty(MAIL_SENDER_EMAIL));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(MAIL_SENDER_EMAIL, "Invalid email address."));
     }
   }
 
@@ -466,24 +466,24 @@ public class Properties extends java.util.Properties {
       String email = getAdminEmailAddress();
       new InternetAddress(email).validate();
     } catch (AddressException ex) {
-      throw new InvalidPropertyException("Invalid email address." + pleaseCheckTheProperty(ADMIN_EMAIL));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(ADMIN_EMAIL, "Invalid email address."));
     }
   }
 
   public static String couldNotConnectToMailServer() {
-    return "Could not connect to the mail server." + pleaseCheckTheProperties();
+    return pleaseCheckTheProperties("Could not connect to the mail server.");
   }
 
   public static String invalidMailCredentialsMessage() {
-    return "Mail server username or password is invalid." + pleaseCheckTheProperties();
+    return pleaseCheckTheProperties("Mail server username or password is invalid.");
   }
 
-  private static String pleaseCheckTheProperty(String propertyName) {
-    return new StringBuilder(" Please check the '").append(propertyName).append("' property in the application config file.").toString();
+  private static String pleaseCheckTheProperty(String propertyName, String prefix) {
+    return String.format("%s Please check the '%s' property in the application config file.", prefix, propertyName);
   }
 
-  private static String pleaseCheckTheProperties() {
-    return " Please check the properties in the application config file.";
+  private static String pleaseCheckTheProperties(String prefix) {
+    return String.format("%s Please check the properties in the application config file.", prefix);
   }
 
   public class MailSMTP {
