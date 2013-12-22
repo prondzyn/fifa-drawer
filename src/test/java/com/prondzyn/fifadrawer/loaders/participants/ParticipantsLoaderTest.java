@@ -2,15 +2,20 @@ package com.prondzyn.fifadrawer.loaders.participants;
 
 import com.prondzyn.fifadrawer.Properties;
 import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
-import com.prondzyn.fifadrawer.lang.ApplicationException;
+import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.loaders.ParticipantsLoader;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
+public class ParticipantsLoaderTest {
+
+  @Rule
+  public ExpectedException exception = ExpectedException.none();
 
   private Properties properties;
 
@@ -19,8 +24,12 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     properties = new Properties("fake.cfg");
   }
 
-  @Test(expected = ParticipantsFileException.class)
+  @Test
   public void testLoadingEmptyFile() {
+    // expect
+    exception.expect(ParticipantsFileException.class);
+    exception.expectMessage("Not enough active participants in the participants file.");
+    // test
     String filepath = getFilepath("empty.csv");
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
@@ -53,8 +62,12 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     loader.load();
   }
 
-  @Test(expected = ApplicationException.class)
+  @Test
   public void testLoadingFileWhichDoesNotExists() {
+    // expect
+    exception.expect(LoadingException.class);
+    exception.expectMessage("File 'file-does-not-exist.csv' not found.");
+    // test
     properties.setProperty("file.path.participants", "file-does-not-exist.csv");
     ParticipantsLoader loader = new ParticipantsLoader(properties);
     loader.load();
@@ -69,40 +82,60 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     assertEquals(10, participants.size());
   }
 
-  @Test(expected = ParticipantsFileException.class)
+  @Test
   public void testLoadingFileContainingBlankUsername() {
+    // expect
+    exception.expect(ParticipantsFileException.class);
+    exception.expectMessage("Invalid email address. Line #9. Please check the participants file.");
+    // test
     String filepath = getFilepath("blank-username.csv");
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
     loader.load();
   }
 
-  @Test(expected = ParticipantsFileException.class)
+  @Test
   public void testLoadingFileContainingBlankActiveIndicator() {
+    // expect
+    exception.expect(ParticipantsFileException.class);
+    exception.expectMessage("Is active indicator cannot be blank. Line #14. Please check the participants file.");
+    // test
     String filepath = getFilepath("blank-active-indicator.csv");
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
     loader.load();
   }
 
-  @Test(expected = ParticipantsFileException.class)
+  @Test
   public void testLoadingFileContainingBlankEmailAddres() {
+    // expect
+    exception.expect(ParticipantsFileException.class);
+    exception.expectMessage("Participant email address cannot be blank. Line #21. Please check the participants file.");
+    // test
     String filepath = getFilepath("blank-email.csv");
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
     loader.load();
   }
 
-  @Test(expected = ParticipantsFileException.class)
+  @Test
   public void testLoadingFileContainingInvalidActiveIndicator() {
+    // expect
+    exception.expect(ParticipantsFileException.class);
+    exception.expectMessage("Unknown boolean value 'out of office' found. Allowed positive values: [Y, YES, T, TRUE]. Allowed negative values: [N, NO, FALSE]. Line #18. Please check the participants file.");
+    // test
     String filepath = getFilepath("invalid-active-indicator.csv");
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
     loader.load();
   }
 
-  @Test(expected = ParticipantsFileException.class)
+  @Test
   public void testLoadingFileContainingInvalidEmailAddres() {
+    // expect
+    exception.expect(ParticipantsFileException.class);
+    exception.expectMessage("Invalid email address. Line #9. Please check the participants file.");
+    // test
     String filepath = getFilepath("invalid-email.csv");
     properties.setProperty("file.path.participants", filepath);
     ParticipantsLoader loader = new ParticipantsLoader(properties);
@@ -129,5 +162,9 @@ public class ParticipantsLoaderTest extends AbstractParticipantsLoaderTest {
     String[] expecteds = new String[]{"Beata", "Jakub", "Lidia"};
     String[] actuals = usernames.toArray(new String[usernames.size()]);
     assertArrayEquals(expecteds, actuals);
+  }
+
+  private String getFilepath(String filename) {
+    return getClass().getResource("/com/prondzyn/fifadrawer/loaders/participants/" + filename).getPath();
   }
 }

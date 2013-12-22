@@ -65,8 +65,10 @@ public class ParticipantsLoader {
 
       }
 
-    } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+    } catch (UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
+    } catch (FileNotFoundException ex) {
+      throw new LoadingException("File '" + file + "' not found.", ex);
     } catch (IOException ex) {
       throw new LoadingException("There was a problem with reading file '" + file + "'.", ex);
     } finally {
