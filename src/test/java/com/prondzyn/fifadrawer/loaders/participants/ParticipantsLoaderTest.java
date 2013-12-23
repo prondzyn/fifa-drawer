@@ -5,6 +5,7 @@ import com.prondzyn.fifadrawer.entities.holders.ParticipantsHolder;
 import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
 import com.prondzyn.fifadrawer.loaders.ParticipantsLoader;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.List;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -165,6 +166,6 @@ public class ParticipantsLoaderTest {
   }
 
   private String getFilepath(String filename) {
-    return getClass().getResource("/com/prondzyn/fifadrawer/loaders/participants/" + filename).getPath();
+    return getClass().getResource(msg("/com/prondzyn/fifadrawer/loaders/participants/%s", filename)).getPath();
   }
 }

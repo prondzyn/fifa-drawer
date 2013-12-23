@@ -11,6 +11,7 @@ import com.prondzyn.fifadrawer.lang.LoadingException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.IOUtils;
 import com.prondzyn.fifadrawer.loaders.filters.TeamsFilter;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import com.prondzyn.fifadrawer.validators.TeamsFileLineValidator;
 import java.io.File;
 import java.io.FileInputStream;
@@ -67,7 +68,7 @@ public class TeamsLoader {
     } catch (FileNotFoundException | UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
     } catch (IOException ex) {
-      throw new LoadingException("There was a problem with reading file '" + file + "'.", ex);
+      throw new LoadingException(msg("There was a problem with reading file '%s'.", file), ex);
     } finally {
       IOUtils.closeQuietly(fis);
       IOUtils.closeQuietly(ioReader);

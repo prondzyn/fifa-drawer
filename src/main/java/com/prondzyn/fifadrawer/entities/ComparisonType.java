@@ -2,6 +2,7 @@ package com.prondzyn.fifadrawer.entities;
 
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.utils.StringUtils;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,7 +28,7 @@ public enum ComparisonType {
         return type;
       }
     }
-    throw new ParseException("Unknown comparison type '" + value + "' found. Allowed values: " + allowedValues() + ".");
+    throw new ParseException(msg("Unknown comparison type '%s' found. Allowed values: %s.", value, allowedValues()));
   }
 
   private static List<String> allowedValues() {

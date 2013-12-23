@@ -1,6 +1,7 @@
 package com.prondzyn.fifadrawer.validators;
 
 import com.prondzyn.fifadrawer.lang.ParticipantsFileException;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.List;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
@@ -36,7 +37,7 @@ public class ParticipantsFileLineValidator extends AbstractFileLineValidator {
 
   @Override
   protected String errorMessage(int lineNumber, String prefix) {
-    return String.format("%s Line #%s. Please check the participants file.", prefix, lineNumber);
+    return msg("%s Line #%s. Please check the participants file.", prefix, lineNumber);
   }
 
   @Override

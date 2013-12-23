@@ -3,6 +3,7 @@ package com.prondzyn.fifadrawer.validators;
 import com.prondzyn.fifadrawer.entities.Rank;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.lang.TeamsFileException;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.List;
 
 public class TeamsFileLineValidator extends AbstractFileLineValidator {
@@ -42,7 +43,7 @@ public class TeamsFileLineValidator extends AbstractFileLineValidator {
 
   @Override
   protected String errorMessage(int lineNumber, String prefix) {
-    return String.format("%s Line #%s. Please check the teams file.", prefix, lineNumber);
+    return msg("%s Line #%s. Please check the teams file.", prefix, lineNumber);
   }
 
   @Override

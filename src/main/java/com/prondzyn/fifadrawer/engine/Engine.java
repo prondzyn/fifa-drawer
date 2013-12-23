@@ -17,7 +17,7 @@ public class Engine {
   public static void main(String[] args) throws Exception {
 
     if (args.length < 1) {
-      System.out.println("\nError: Missing parameter. You have to specify path to the application config file.");
+      System.out.println("Error: Missing parameter. You have to specify path to the application config file.");
       return;
     }
 
@@ -37,7 +37,7 @@ public class Engine {
       sendIfAllowed(properties, drawn, participants.getEmails());
 
     } catch (ApplicationException ex) {
-      System.out.println("Error: " + ex.getMessage());
+      System.out.printf("Error: %s\n", ex.getMessage());
     }
   }
 

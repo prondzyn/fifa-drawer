@@ -1,6 +1,7 @@
 package com.prondzyn.fifadrawer.utils;
 
 import com.prondzyn.fifadrawer.lang.ParseException;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,6 @@ public abstract class BooleanUtils {
     if (FALSE_VALUES.contains(StringUtils.upper(value))) {
       return false;
     }
-    throw new ParseException("Unknown boolean value '" + value + "' found. Allowed positive values: " + TRUE_VALUES + ". Allowed negative values: " + FALSE_VALUES + ".");
+    throw new ParseException(msg("Unknown boolean value '%s' found. Allowed positive values: %s. Allowed negative values: %s.", value, TRUE_VALUES, FALSE_VALUES));
   }
 }

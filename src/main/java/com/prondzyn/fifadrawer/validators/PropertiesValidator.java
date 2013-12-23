@@ -8,6 +8,7 @@ import com.prondzyn.fifadrawer.lang.InvalidPropertyException;
 import com.prondzyn.fifadrawer.lang.MissingPropertyException;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.utils.StringUtils;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -89,7 +90,7 @@ public class PropertiesValidator {
     for (String req : requiredProperties) {
       String value = properties.getProperty(req);
       if (value == null) {
-        throw new MissingPropertyException("Property '" + req + "' not found. Please check the application config file.");
+        throw new MissingPropertyException(msg("Property '%s' not found. Please check the application config file.", req));
       }
     }
   }
@@ -162,7 +163,7 @@ public class PropertiesValidator {
 
   private void validateFile(File file, String key) {
     if (!file.exists()) {
-      throw new InvalidPropertyException(pleaseCheckTheProperty(key, "File '" + file + "' not found."));
+      throw new InvalidPropertyException(pleaseCheckTheProperty(key, msg("File '%s' not found.", file)));
     }
     if (!file.isFile()) {
       throw new InvalidPropertyException(pleaseCheckTheProperty(key, "Given file is not a regular file."));
@@ -180,7 +181,7 @@ public class PropertiesValidator {
 
   private void validateParticipantsPerMatchCountRange(int count) {
     if (PARTICIPANTS_PER_MATCH_MIN_COUNT > count || count > PARTICIPANTS_PER_MATCH_MAX_COUNT) {
-      throw new InvalidPropertyException(String.format("The '%s' property is out of range. It must be between %d and %d. Please check the application config file.", PARTICIPANTS_PER_MATCH_COUNT, PARTICIPANTS_PER_MATCH_MIN_COUNT, PARTICIPANTS_PER_MATCH_MAX_COUNT));
+      throw new InvalidPropertyException(msg("The '%s' property is out of range. It must be between %d and %d. Please check the application config file.", PARTICIPANTS_PER_MATCH_COUNT, PARTICIPANTS_PER_MATCH_MIN_COUNT, PARTICIPANTS_PER_MATCH_MAX_COUNT));
     }
   }
 
@@ -217,7 +218,7 @@ public class PropertiesValidator {
 
   private void mustBeNotNegative(int value) {
     if (value < 0) {
-      throw new InvalidPropertyException(String.format("The '%s' property must not be negative. Please check the application config file.", SINGLE_MATCH_DURATION));
+      throw new InvalidPropertyException(msg("The '%s' property must not be negative. Please check the application config file.", SINGLE_MATCH_DURATION));
     }
   }
 
@@ -311,11 +312,11 @@ public class PropertiesValidator {
       int port = properties.new MailSMTP().getPort();
       mustBeNotNegative(port);
     } catch (NumberFormatException ex) {
-      throw new InvalidPropertyException("Mail server port is invalid. Please check the '" + PORT + "' property in the application config file.");
+      throw new InvalidPropertyException(msg("Mail server port is invalid. Please check the '%s' property in the application config file.", PORT));
     }
   }
 
   private static String pleaseCheckTheProperty(String propertyName, String prefix) {
-    return String.format("%s Please check the '%s' property in the application config file.", prefix, propertyName);
+    return msg("%s Please check the '%s' property in the application config file.", prefix, propertyName);
   }
 }

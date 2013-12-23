@@ -71,4 +71,8 @@ public abstract class StringUtils {
     }
     return builder.toString();
   }
+
+  public static String msg(String format, Object... args) {
+    return String.format(format, args);
+  }
 }

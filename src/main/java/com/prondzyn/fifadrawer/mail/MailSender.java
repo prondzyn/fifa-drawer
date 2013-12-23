@@ -4,6 +4,7 @@ import com.prondzyn.fifadrawer.Properties;
 import static com.prondzyn.fifadrawer.Properties.DEFAULT_CHARSET;
 import com.prondzyn.fifadrawer.lang.MailException;
 import com.prondzyn.fifadrawer.utils.CopyUtils;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.Date;
 import java.util.Set;
 import javax.mail.AuthenticationFailedException;
@@ -85,6 +86,6 @@ public class MailSender {
   }
 
   private static String pleaseCheckTheProperties(String prefix) {
-    return String.format("%s Please check the properties in the application config file.", prefix);
+    return msg("%s Please check the properties in the application config file.", prefix);
   }
 }

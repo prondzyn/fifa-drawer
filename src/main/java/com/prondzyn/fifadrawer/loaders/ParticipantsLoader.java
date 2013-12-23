@@ -15,6 +15,7 @@ import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.io.CSVReader;
 import com.prondzyn.fifadrawer.loaders.filters.ParticipantsFilter;
 import com.prondzyn.fifadrawer.utils.IOUtils;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import com.prondzyn.fifadrawer.validators.ParticipantsFileLineValidator;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -68,9 +69,9 @@ public class ParticipantsLoader {
     } catch (UnsupportedEncodingException ex) {
       throw new ApplicationException(ex);
     } catch (FileNotFoundException ex) {
-      throw new LoadingException("File '" + file + "' not found.", ex);
+      throw new LoadingException(msg("File '%s' not found.", file), ex);
     } catch (IOException ex) {
-      throw new LoadingException("There was a problem with reading file '" + file + "'.", ex);
+      throw new LoadingException(msg("There was a problem with reading file '%s'.", file), ex);
     } finally {
       IOUtils.closeQuietly(fis);
       IOUtils.closeQuietly(ioReader);

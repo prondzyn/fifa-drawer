@@ -3,6 +3,7 @@ package com.prondzyn.fifadrawer.validators;
 import com.prondzyn.fifadrawer.lang.ParseException;
 import com.prondzyn.fifadrawer.utils.BooleanUtils;
 import com.prondzyn.fifadrawer.utils.StringUtils;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.util.List;
 
 public abstract class AbstractFileLineValidator {
@@ -19,7 +20,7 @@ public abstract class AbstractFileLineValidator {
   }
 
   private String requiredErrorMessage(int lineNumber, String columnName) {
-    return errorMessage(lineNumber, String.format("%s cannot be blank.", columnName));
+    return errorMessage(lineNumber, msg("%s cannot be blank.", columnName));
   }
 
   protected abstract void requiredInternal(String message);

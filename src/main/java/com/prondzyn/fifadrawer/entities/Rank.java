@@ -1,6 +1,7 @@
 package com.prondzyn.fifadrawer.entities;
 
 import com.prondzyn.fifadrawer.lang.ParseException;
+import static com.prondzyn.fifadrawer.utils.StringUtils.msg;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +54,9 @@ public enum Rank {
         }
       }
     } catch (NumberFormatException ex) {
-      throw new ParseException("Invalid rank '" + value + "' found. Allowed values: " + allowedValues() + ".");
+      throw new ParseException(msg("Invalid rank '%s' found. Allowed values: %s.", value, allowedValues()));
     }
-    throw new ParseException("Unknown rank '" + value + "' found. Allowed values: " + allowedValues() + ".");
+    throw new ParseException(msg("Unknown rank '%s' found. Allowed values: %s.", value, allowedValues()));
   }
 
   private static List<String> allowedValues() {
