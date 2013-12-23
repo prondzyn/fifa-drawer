@@ -55,11 +55,11 @@ public class MailSender {
       transport.close();
 
     } catch (AuthenticationFailedException ex) {
-      throw new MailException(Properties.invalidMailCredentialsMessage(), ex);
+      throw new MailException(invalidMailCredentialsMessage(), ex);
     } catch (SendFailedException ex) {
       throw new MailException("Invalid email address found. Please check all entered emails in the application config file and in the participants file.", ex);
     } catch (MessagingException ex) {
-      String msg = (ex.getMessage() == null) ? Properties.couldNotConnectToMailServer() : ex.getMessage();
+      String msg = (ex.getMessage() == null) ? couldNotConnectToMailServer() : ex.getMessage();
       throw new MailException(msg, ex);
     }
   }
@@ -74,5 +74,17 @@ public class MailSender {
       i += 1;
     }
     return addresses;
+  }
+
+  private static String couldNotConnectToMailServer() {
+    return pleaseCheckTheProperties("Could not connect to the mail server.");
+  }
+
+  private static String invalidMailCredentialsMessage() {
+    return pleaseCheckTheProperties("Mail server username or password is invalid.");
+  }
+
+  private static String pleaseCheckTheProperties(String prefix) {
+    return String.format("%s Please check the properties in the application config file.", prefix);
   }
 }
