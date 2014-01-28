@@ -1,4 +1,5 @@
 package com.prondzyn.fifadrawer.utils;
+
 import java.util.List;
 import java.util.Random;
 
@@ -22,7 +23,7 @@ public class RandomUtils {
     if (count == 0) {
       return FAKE_INDEX;
     }
-    Random random = new Random();
+    Random random = new Random(System.currentTimeMillis());
     return random.nextInt(count);
   }
 }
