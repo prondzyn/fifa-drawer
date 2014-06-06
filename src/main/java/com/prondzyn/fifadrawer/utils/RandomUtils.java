@@ -3,17 +3,16 @@ package com.prondzyn.fifadrawer.utils;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.Date;
 
 public class RandomUtils {
 
-  static {
-    random = new Random(new Date().getTime());
-  }
-
   public static final int FAKE_INDEX = -1;
-  public static Random random;
 
+  public static Random randomizer;
+
+  static {
+    randomizer = new Random();
+  }
 
   public static <T> T getRandomItem(List<T> list) {
     shuffle(list, 5);
@@ -29,7 +28,7 @@ public class RandomUtils {
 
   private static void shuffle(List<?> list, int numberOfTimes) {
     for (int i = 0; i < numberOfTimes; i++) {
-      Collections.shuffle(list, randomizer());
+      Collections.shuffle(list, randomizer);
     }
   }
 
@@ -39,10 +38,6 @@ public class RandomUtils {
     if (count == 0) {
       return FAKE_INDEX;
     }
-    return randomizer().nextInt(count);
-  }
-
-  private static Random randomizer() {
-    return random;
+    return randomizer.nextInt(count);
   }
 }
